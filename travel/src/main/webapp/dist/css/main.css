@@ -1,0 +1,109 @@
+﻿@charset "UTF-8";
+
+/* Header */
+@media (max-width: 1200px) {
+  .header .logo {
+    order: 1;
+  }
+
+  .header .header-right {
+    order: 2;
+    padding: 0 15px 0 0;
+  }
+
+  .header .navmenu {
+    order: 3;
+  }
+}
+
+/* Navigation */
+.navbar {
+	background-color: #fcfafb;
+	font-weight: 500;
+	font-size: 0.875rem;
+	line-height: 0.2rem;
+	box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.05);
+}
+
+.navbar .navbar-nav {
+	margin-top: 0.75rem;
+	margin-bottom: 0.5rem;
+}
+
+.navbar .nav-item .nav-link {
+	color: #5e6576;
+	transition: all 0.2s ease;
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
+.navbar .nav-item .nav-link:hover,
+.navbar .nav-item .nav-link.active {
+	color: #0d6efd;
+	text-decoration: none;
+}
+
+.navbar .dropdown-menu {
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
+}
+
+.navbar .dropdown-item {
+	color: #5e6576;
+	font-weight: 500;
+	font-size: 0.875rem;
+	line-height: 0.875rem;
+	padding-top: 0.625rem;
+	padding-bottom: 0.625rem;	
+}
+
+.navbar .dropdown-item:hover {
+	background-color: #fcfafb;
+	color: #0092ff;
+	text-decoration: none;
+}
+
+.header .navbar-toggler:active,
+.header .navbar-toggler:focus {
+	box-shadow: none !important;
+}
+
+.header .header-avatar {
+  padding-left: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.header .header-avatar .avatar-sm {
+  width: 2.45rem; height: 2.45rem;
+  object-fit: cover;
+  border: 1px solid #f8f9fa;  border-radius: 50% !important;
+  cursor: pointer;
+  transition: transform 0.5s ease-in-out;
+}
+.header .header-avatar .avatar-sm:hover {
+  transform: scale(1.05);
+}
+
+/* body */
+.body-container {
+    min-height: 500px;
+}
+
+.body-title {
+    color: #424951;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    margin: 0 0 25px 0;
+    border-bottom: 1px solid #ddd;
+}
+.body-title h3 {
+    font-size: 23px;
+    min-width: 300px;
+    font-family:"Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
+    font-weight: bold;
+    margin: 0 0 -5px 0;
+    padding-bottom: 5px;
+    display: inline-block;
+    border-bottom: 3px solid #424951;
+}

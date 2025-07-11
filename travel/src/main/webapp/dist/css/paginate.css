@@ -1,0 +1,59 @@
+﻿@charset "UTF-8";
+
+/* 페이징 처리 CSS */
+.page-navigation {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  
+  padding: 20px 0;
+}
+
+.paginate {
+  display: flex;
+  align-content: center;
+  flex-wrap: wrap;
+  
+  font-size: 14px;	
+}
+
+.paginate a,
+.paginate span {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+}
+
+.paginate a {
+  cursor: pointer;
+  text-decoration: none;  
+}
+
+.paginate a:hover, 
+.paginate a:focus {
+  z-index: 2;
+  color: #106eea;  
+}
+
+.paginate span {
+  z-index: 3;
+  color: #ffffff;
+  background-color: #106eea;
+  border-color: #106eea;
+}
+
+.paginate :first-child {
+  margin-left: 0;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.paginate :last-child {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
