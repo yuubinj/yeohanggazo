@@ -132,7 +132,6 @@
 								<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 							</c:otherwise>
 						</c:choose>
-						<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 						<ul class="dropdown-menu">
 							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">사진첩</a></li>
 							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">일정관리</a></li>
@@ -200,6 +199,8 @@
 	
 	<!-- Login Modal -->
 	<script type="text/javascript">
+	console.log('${sessionScope.member.avatar}');
+	console.log('${sessionScope.member}');
 		function dialogLogin() {
 			$('form[name=modalLoginForm] input[name=userId]').val('');
 			$('form[name=modalLoginForm] input[name=userPwd]').val('');
