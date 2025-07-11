@@ -55,6 +55,12 @@
 						<li class="nav-item" role="presentation">
 							<button class="nav-link active" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">모두</button>
 						</li>
+						
+						<c:forEach var="vo" items="${listCategory}" varStatus="status">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="${vo.categoryNum}">${vo.category}</button>
+							</li>
+						</c:forEach>
 		
 					</ul>
 
@@ -62,20 +68,43 @@
 						<div class="row py-3">
 							<div class="col-3"></div>
 							<div class="col-6">
-								<form class="row" name="searchForm">
-									<div class="col input-group">
-										<input type="text" name="kwd" value="${kwd}" class="form-control rounded me-1" placeholder="검색 키워드를 입력하세요">
-										<button type="button" class="btn btn-light rounded" onclick="searchList()"> <i class="bi bi-search"></i> </button>
-										
-										<input type="hidden" id="searchType" value="all">
-										<input type="hidden" id="searchValue" value="">
-									</div>
-								</form>
+
 							</div>
 							<div class="col-3"></div>
 						</div>
 						
 						<div class="tab-pane fade show active" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content"></div>
+						
+						<%-- 문의 등록 --%>
+						<div class="row board-list-footer">
+						<div class="col">
+							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/inquiry/list';" title="새로고침"><i class="bi bi-arrow-counterclockwise"></i></button>
+						</div>
+						<div class="col-6 d-flex justify-content-center">
+							<form class="row" name="searchForm">										
+								<div class="col input-group">
+									<div class="col-auto p-1">
+										<select name="schType" class="form-select">
+											<option value="all" ${schType=="all"?"selected":""}>제목+내용</option>
+											<option value="userName" ${schType=="userName"?"selected":""}>작성자</option>
+											<option value="reg_date" ${schType=="reg_date"?"selected":""}>등록일</option>
+											<option value="subject" ${schType=="subject"?"selected":""}>제목</option>
+											<option value="content" ${schType=="content"?"selected":""}>내용</option>
+										</select>
+									</div>
+									<div class="col-auto p-1">
+										<input type="text" name="kwd" value="${kwd}" class="form-control">
+									</div>
+									<div class="col-auto p-1">
+										<button type="button" class="btn btn-light" onclick="searchList()"> <i class="bi bi-search"></i> </button>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="col text-end">
+							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/inquiry/write';">문의등록</button>
+						</div>
+					</div>
 					</div>
 
 				</div>
@@ -147,19 +176,19 @@ $(function(){
 });
 
 function listPage(page) {
+	const f = document.searchForm;
 	const $tab = $('button[role="tab"].active');
 	let categoryNum = $tab.attr('data-tab');
 	
-	let schType = $('#searchType').val();
-	let kwd = $('#searchValue').val();
+	let schType = f.schType.value;
+	let kwd = f.kwd.value;
 	
-	let url = '${pageContext.request.contextPath}/faq/list';
+	let url = '${pageContext.request.contextPath}/inquiry/list';
 	let query = 'pageNo='+ page + '&categoryNum=' + categoryNum;
 	if( kwd ) {
-		query += '&schType=' + schType 
-			+ '&kwd=' + encodeURIComponent(kwd);
+		query += '&schType=' + schType + '&kwd=' + kwd;
 	}
-
+	
 	let selector = '#nav-content';
 	
 	const fn = function(data) {
@@ -172,16 +201,15 @@ function listPage(page) {
 //검색 폼 초기화
 function resetSearch() {
 	const f = document.searchForm;
-	f.kwd.value = '';
 	
-	$('#searchValue').val('');
+	f.kwd.value = '';	
 }
 
 function searchList() {
 	const f = document.searchForm;
 	
 	let kwd = f.kwd.value.trim();
-	$('#searchValue').val(kwd);
+	f.kwd.value = kwd;
 	
 	listPage(1);
 }

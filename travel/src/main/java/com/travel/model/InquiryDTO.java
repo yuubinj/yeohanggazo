@@ -6,8 +6,10 @@ public class InquiryDTO {
 	private String userName;
 	private int secret;
 	private long categoryNum;
+	private String category;
 	private String subject;
 	private String question;
+	
 	private String answer;
 	private String reg_date;
 	private String answerId;
@@ -43,6 +45,12 @@ public class InquiryDTO {
 	}
 	public void setCategoryNum(long categoryNum) {
 		this.categoryNum = categoryNum;
+	}
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
 	}
 	public String getSubject() {
 		return subject;

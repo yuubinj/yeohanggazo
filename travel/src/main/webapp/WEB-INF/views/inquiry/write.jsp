@@ -31,7 +31,7 @@
 							<tr>
 								<td class="bg-light col-sm-2" scope="row">제 목</td>
 								<td>
-									<input type="text" name="title" maxlength="100" class="form-control" value="${dto.title}">
+									<input type="text" name="subject" maxlength="100" class="form-control" value="${dto.subject}">
 								</td>
 							</tr>
 		        
@@ -58,20 +58,17 @@
 								<td class="bg-light col-sm-2" scope="row">카테고리</td>
 								<td class="py-3"> 
 									<input type="radio" name="categoryNum" id="categoryNum1" class="form-check-input" 
-										value="0" ${empty dto || dto.categoryNum=='모두'?"checked='checked'":"" }>
-									<label class="form-check-label" for="categoryNum1">모두</label>
+										value="1" ${dto.categoryNum==1?"checked='checked'":"" }>
+									<label class="form-check-label" for="categoryNum1">회원정보</label>
 									<input type="radio" name="categoryNum" id="categoryNum2" class="form-check-input" 
-										value="0" ${dto.secret==1?"checked='checked'":"" }>
-									<label class="form-check-label" for="categoryNum2">회원정보</label>
+										value="2" ${dto.categoryNum==2?"checked='checked'":"" }>
+									<label class="form-check-label" for="categoryNum2">지역정보</label>
 									<input type="radio" name="categoryNum" id="categoryNum3" class="form-check-input" 
-										value="0" ${dto.secret==1?"checked='checked'":"" }>
-									<label class="form-check-label" for="categoryNum3">지역정보</label>
-									<input type="radio" name="categoryNum" id="categoryNum4" class="form-check-input" 
-										value="0" ${dto.secret==1?"checked='checked'":"" }>
-									<label class="form-check-label" for="categoryNum4">이용안내</label>
-									<input type="radio" name="categoryNum" id="categoryNum5" class="form-check-input"
-										value="1" ${dto.secret==1?"checked='checked'":"" }>
-									<label class="form-check-label" for="categoryNum5">기타</label>
+										value="3" ${dto.categoryNum==3?"checked='checked'":"" }>
+									<label class="form-check-label" for="categoryNum3">이용안내</label>
+									<input type="radio" name="categoryNum" id="categoryNum4" class="form-check-input"
+										value="4" ${dto.categoryNum==4?"checked='checked'":"" }>
+									<label class="form-check-label" for="categoryNum4">기타</label>
 								</td>
 							</tr>
 						
@@ -88,7 +85,7 @@
 								<td class="text-center">
 									<button type="button" class="btn btn-dark" onclick="sendOk();">${mode=='update'?'수정완료':'등록완료'}&nbsp;<i class="bi bi-check2"></i></button>
 									<button type="reset" class="btn btn-light">다시입력</button>
-									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/qna/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
+									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/inquiry/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
 									<c:if test="${mode=='update'}">
 										<input type="hidden" name="num" value="${dto.num}">
 										<input type="hidden" name="page" value="${page}">
@@ -109,10 +106,10 @@ function sendOk() {
 	const f = document.questionForm;
 	let str;
 	
-	str = f.title.value.trim();
+	str = f.subject.value.trim();
 	if( ! str ) {
 		alert('제목을 입력하세요. ');
-		f.title.focus();
+		f.subject.focus();
 		return;
 	}
 
@@ -123,7 +120,7 @@ function sendOk() {
 		return;
 	}
 
-	f.action = '${pageContext.request.contextPath}/qna/${mode}';
+	f.action = '${pageContext.request.contextPath}/inquiry/${mode}';
 	f.submit();
 }
 </script>

@@ -7,15 +7,18 @@ import com.travel.dao.InquiryDAO;
 import com.travel.model.FaqDTO;
 import com.travel.model.InquiryDTO;
 import com.travel.model.SessionInfo;
+import com.travel.mvc.annotation.Controller;
 import com.travel.mvc.annotation.RequestMapping;
 import com.travel.mvc.annotation.RequestMethod;
 import com.travel.mvc.view.ModelAndView;
+import com.travel.util.MyUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+@Controller
 public class InquiryController {
 	
 	@RequestMapping(value = "/inquiry/main", method = RequestMethod.GET)
@@ -34,12 +37,101 @@ public class InquiryController {
 		
 		return mav;
 	}
-	/*
+	
 	// 문의 리스트
 	@RequestMapping(value = "/inquiry/list", method = RequestMethod.GET)
 	public ModelAndView list(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("inquiry/list");
 		
+		InquiryDAO dao = new InquiryDAO();
+		
+		MyUtil util = new MyUtil();
+		
+		try {
+			int size = 3;
+			int total_page = 0;
+			int dataCount = 0;
+			
+			String pageNo = req.getParameter("pageNo");
+			int current_page = 1;
+			if(pageNo != null) {
+				current_page = Integer.parseInt(pageNo);
+			}
+			
+			long categoryNum = 0;
+			String strCategoryNum = req.getParameter("categoryNum");
+			if(strCategoryNum != null) {
+				categoryNum = Long.parseLong(strCategoryNum);
+			}
+			
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if(schType == null) {
+				schType = "all";
+				kwd = "";						
+			}
+			kwd = util.decodeUrl(kwd);
+			
+			if(kwd.length() == 0) {
+				dataCount = dao.dataCount(categoryNum);
+			} else {
+				dataCount = dao.dataCount(categoryNum, schType, kwd);
+			}
+			
+			if(dataCount != 0) {
+				total_page = util.pageCount(dataCount, size);
+			}
+			
+			if(current_page > total_page) {
+				current_page = total_page;
+			}
+			
+			int offset = (current_page - 1) * size;
+			if(offset < 0) offset = 0;
+			
+			List<InquiryDTO> list = null;
+			
+			if(kwd.length() == 0) {
+				list = dao.listInquiry(categoryNum, offset, size);
+			} else {
+				list = dao.listInquiry(categoryNum, offset, size, schType, kwd);
+			}
+			
+			for(InquiryDTO dto : list) {
+				dto.setQuestion(dto.getQuestion().replaceAll("\n", "<br>"));
+			}
+			
+			String query = "";
+			if(kwd.length() != 0) {
+				query = "kwd=" + util.encodeUrl(kwd);
+			}
+			
+			String cp = req.getContextPath();
+
+			String articleUrl = cp + "/inquiry/article?pageNo=" + current_page;
+			if(query.length() != 0) {
+				articleUrl += "&" + query;
+			}
+			
+			String paging = util.pagingMethod(current_page, total_page, "listPage");
+			
+			mav.addObject("list", list);
+			mav.addObject("pageNo", current_page);
+			mav.addObject("dataCount", dataCount);
+			mav.addObject("total_page", total_page);
+			mav.addObject("size", size);
+			mav.addObject("articleUrl", articleUrl);
+			mav.addObject("kwd", kwd);
+			mav.addObject("paging", paging);
+
+		} catch (Exception e) {
+			resp.sendError(410);
+			throw e;
+		}
+		
+		return mav;
 	}
+	
 	
 	// 글쓰기 폼
 	@RequestMapping(value = "/inquiry/write", method = RequestMethod.GET)
@@ -77,12 +169,14 @@ public class InquiryController {
 		return new ModelAndView("redirect:/inquiry/list");
 	}
 	
+	/*
 	// 글보기
 	@RequestMapping(value = "/inquiry/article", method = RequestMethod.GET)
 	public ModelAndView article(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
 	}
-	
+	*/
+	/*
 	// 글 수정 폼
 	@RequestMapping(value = "/inquiry/update", method = RequestMethod.GET)
 	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

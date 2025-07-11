@@ -79,8 +79,55 @@ public class InquiryDAO {
 	}
 	
 	// 검색에서의 데이터 개수
-	public int dataCount(int categoryNum, String schType, String kwd) {
+	public int dataCount(long categoryNum, String schType, String kwd) {
 		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT NVL(COUNT(*), 0) FROM inquiry iq "
+					+ " JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum "
+					+ " WHERE fc.enabled = 1 ";
+			if(schType.equals("all")) {
+				sql += " AND (INSTR(subject, ?) >= 1 OR INSTR(question, ?) >= 1 ) ";
+			} else if(schType.equals("reg_date")) {
+				kwd = kwd.replaceAll("(\\-|\\.|\\/)", "");
+				sql += " AND TO_CHAR(reg_date, 'YYYY-MM-DD') = ? ";
+			} else {
+				sql += " AND INSTR(" + schType + ", ?) >= 1";
+			}
+			if(categoryNum != 0) {
+				sql += " AND iq.categoryNum = ?";
+			}
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			if(schType.equals("all")) {
+				pstmt.setString(1, kwd);
+				pstmt.setString(2, kwd);
+				if(categoryNum != 0) {
+					pstmt.setLong(3, categoryNum);
+				}
+			} else {
+				pstmt.setString(1, kwd);
+				if(categoryNum != 0) {
+					pstmt.setLong(2, categoryNum);
+				}
+			}
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = rs.getInt(1);
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
 		
 		return result;
 	}
@@ -131,15 +178,8 @@ public class InquiryDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			/*
-			sb.append(" SELECT num, iq.userId, userName, secret, fc.categoryNum, subject, question, reg_date, answerId, answer, TO_CHAR(answer_date, 'YYYY-MM-DD') answer_date ");
-			sb.append(" FROM inquiry iq ");
-			sb.append(" JOIN member1 m1 ON iq.userId = m1.userId ");
-			sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
-			sb.append(" WHERE fc.enabled = 1 ");
-			*/
-			sb.append(" SELECT num, iq.userId, userName, fc.categoryNum, subject, question, TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date ");
-			sb.append(" 	answerId, secret ");
+			sb.append(" SELECT num, iq.userId, userName, fc.categoryNum, category, subject, question, ");
+			sb.append(" 	TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date, answerId, secret ");
 			sb.append(" FROM inquiry iq ");
 			sb.append(" JOIN member1 m1 ON iq.userId = m1.userId ");
 			sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
@@ -147,7 +187,7 @@ public class InquiryDAO {
 			if(categoryNum != 0) {
 				sb.append(" AND fc.categoryNum = ? ");
 			}
-			sb.append(" ORDRE BY num DESC ");
+			sb.append(" ORDER BY num DESC ");
 			sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 
 			pstmt = conn.prepareStatement(sb.toString());
@@ -169,6 +209,7 @@ public class InquiryDAO {
 				dto.setUserId(rs.getString("userId"));
 				dto.setUserName(rs.getString("userName"));
 				dto.setCategoryNum(rs.getLong("categoryNum"));
+				dto.setCategory(rs.getString("category"));
 				dto.setSubject(rs.getString("subject"));
 				dto.setQuestion(rs.getString("question"));
 				dto.setReg_date(rs.getString("reg_date"));
@@ -196,21 +237,14 @@ public class InquiryDAO {
 		StringBuilder sb = new StringBuilder();
 		
 		try {
-			/*
-			sb.append(" SELECT num, iq.userId, userName, secret, fc.categoryNum, subject, question, reg_date, answerId, answer, TO_CHAR(answer_date, 'YYYY-MM-DD') answer_date ");
-			sb.append(" FROM inquiry iq ");
-			sb.append(" JOIN member1 m1 ON iq.userId = m1.userId ");
-			sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
-			sb.append(" WHERE fc.enabled = 1 ");
-			*/
-			sb.append(" SELECT num, iq.userId, userName, fc.categoryNum, subject, question, TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date ");
-			sb.append(" 	answerId, secret ");
+			sb.append(" SELECT num, iq.userId, userName, fc.categoryNum, category, subject, question, ");
+			sb.append(" 	TO_CHAR(reg_date, 'YYYY-MM-DD') reg_date, answerId, secret ");
 			sb.append(" FROM inquiry iq ");
 			sb.append(" JOIN member1 m1 ON iq.userId = m1.userId ");
 			sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
 			sb.append(" WHERE fc.enabled = 1 ");
 			if(schType.equals("all")) {
-				sb.append(" AND (INSTR(subject, ?) >= 1 OR INSTR(content, ?) >= 1 ) ");
+				sb.append(" AND (INSTR(subject, ?) >= 1 OR INSTR(question, ?) >= 1 ) ");
 			} else if(schType.equals("reg_date")) {
 				kwd = kwd.replaceAll("(\\-|\\.|\\/)", "");
 				sb.append(" AND TO_CHAR(reg_date, 'YYYY-MM-DD') = ? ");
@@ -220,7 +254,7 @@ public class InquiryDAO {
 			if(categoryNum != 0) {
 				sb.append(" AND fc.categoryNum = ? ");
 			}
-			sb.append(" ORDRE BY num DESC ");
+			sb.append(" ORDER BY num DESC ");
 			sb.append(" OFFSET ? ROWS FETCH FIRST ? ROWS ONLY ");
 
 			pstmt = conn.prepareStatement(sb.toString());
@@ -256,6 +290,7 @@ public class InquiryDAO {
 				dto.setUserId(rs.getString("userId"));
 				dto.setUserName(rs.getString("userName"));
 				dto.setCategoryNum(rs.getLong("categoryNum"));
+				dto.setCategory(rs.getString("category"));
 				dto.setSubject(rs.getString("subject"));
 				dto.setQuestion(rs.getString("question"));
 				dto.setReg_date(rs.getString("reg_date"));

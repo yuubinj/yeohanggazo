@@ -1,5 +1,5 @@
 package com.travel.controller.admin;
 
-public class InquiryManageControler {
+public class InquiryManageController {
 
 }
