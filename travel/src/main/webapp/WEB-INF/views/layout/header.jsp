@@ -18,7 +18,7 @@
 									<a href="javascript:dialogLogin();" title="로그인"><i class="bi bi-lock"></i></a>
 								</div>
 								<div class="p-2">
-									<a href="${pageContext.request.contextPath}/" title="회원가입"><i class="bi bi-person-plus"></i></a>
+									<a href="${pageContext.request.contextPath}/member/account" title="회원가입"><i class="bi bi-person-plus"></i></a>
 								</div>	
 							</c:when>
 							<c:otherwise>
@@ -26,7 +26,7 @@
 									<a href="#" title="알림"><i class="bi bi-bell"></i></a>
 								</div>
 								<div class="p-2">
-									<a href="${pageContext.request.contextPath}/" title="로그아웃"><i class="bi bi-unlock"></i></a>
+									<a href="${pageContext.request.contextPath}/member/logout" title="로그아웃"><i class="bi bi-unlock"></i></a>
 								</div>
 								<c:if test="${sessionScope.member.userLevel>50}">
 									<div class="p-2">
@@ -49,7 +49,7 @@
 			<div class="navmenu collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mx-auto flex-nowrap"> <!-- mx-auto : 우측으로 정렬 -->
 					<li class="nav-item">
-						<a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/">홈</a>
+						<a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/home/mein">홈</a>
 					</li>
 					
 					<li class="nav-item">
@@ -123,7 +123,15 @@
 					<div class="p-2">
 						<a href="#" title="알림"><i class="bi bi-bell"></i></a>
 					</div>
-				
+					<c:if test="${not empty sessionScope.member}">
+						<c:choose>
+							<c:when test="${not empty sessionScope.member.avatar}">
+								<img src="${pageContext.request.contextPath}/uploads/member/${sessionScope.member.avatar}" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							</c:when>
+							<c:otherwise>
+								<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							</c:otherwise>
+						</c:choose>
 						<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
 						<ul class="dropdown-menu">
 							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">사진첩</a></li>
@@ -131,9 +139,9 @@
 							<li><a href="#" class="dropdown-item">쪽지함</a></li>
 							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">메일</a></li>
 							<li><hr class="dropdown-divider"></li>
-							<li><a href="#" class="dropdown-item">정보수정</a></li>
+							<li><a href="${pageContext.request.contextPath}/member/pwd" class="dropdown-item">정보수정</a></li>
 						</ul>
-					
+					</c:if>
 				</div>
 			</div>
 		</div>
@@ -180,7 +188,7 @@
 	                    <div>
 	                        <p class="form-control-plaintext mb-0">
 	                        	아직 회원이 아니세요 ?
-	                        	<a href="${pageContext.request.contextPath}/" class="text-decoration-none">회원가입</a>
+	                        	<a href="${pageContext.request.contextPath}/member/account" class="text-decoration-none">회원가입</a>
 	                        </p>
 	                    </div>
 	                </div>
