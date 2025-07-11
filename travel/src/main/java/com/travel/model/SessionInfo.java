@@ -6,6 +6,7 @@ public class SessionInfo {
 	private String userName;
 	private int userLevel;
 	private String avatar; // profile photo
+	private String locationName;
 	
 	public Long getMemberIdx() {
 		return memberIdx;
@@ -36,5 +37,11 @@ public class SessionInfo {
 	}
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+	public String getLocationName() {
+		return locationName;
+	}
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 }

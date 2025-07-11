@@ -19,7 +19,10 @@ public class MemberDTO {
 	private String zip;
 	private String addr1;
 	private String addr2;
-
+	private String locationName;
+	
+	
+	
 	public Long getMemberIdx() {
 		return memberIdx;
 	}
@@ -127,5 +130,11 @@ public class MemberDTO {
 	}
 	public void setAddr2(String addr2) {
 		this.addr2 = addr2;
+	}
+	public String getLocationName() {
+		return locationName;
+	}
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
 	}
 }
