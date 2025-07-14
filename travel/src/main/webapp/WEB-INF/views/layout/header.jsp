@@ -124,23 +124,28 @@
 						<a href="#" title="알림"><i class="bi bi-bell"></i></a>
 					</div>
 					<c:if test="${not empty sessionScope.member}">
-						<c:choose>
-							<c:when test="${not empty sessionScope.member.avatar}">
-								<img src="${pageContext.request.contextPath}/uploads/member/${sessionScope.member.avatar}" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-							</c:when>
-							<c:otherwise>
-								<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-							</c:otherwise>
-						</c:choose>
-						<ul class="dropdown-menu">
-							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">사진첩</a></li>
-							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">일정관리</a></li>
-							<li><a href="#" class="dropdown-item">쪽지함</a></li>
-							<li><a href="${pageContext.request.contextPath}/" class="dropdown-item">메일</a></li>
-							<li><hr class="dropdown-divider"></li>
-							<li><a href="${pageContext.request.contextPath}/member/pwd" class="dropdown-item">정보수정</a></li>
-						</ul>
-					</c:if>
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.member.avatar}">
+                                <img src="${pageContext.request.contextPath}/uploads/member/${sessionScope.member.avatar}" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            </c:otherwise>
+                        </c:choose>
+                        <ul class="dropdown-menu">
+                            <li><a href="${pageContext.request.contextPath}/member/myPage" class="dropdown-item">마이페이지</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="${pageContext.request.contextPath}/" class="dropdown-item">사진첩</a></li>
+                            <li><a href="${pageContext.request.contextPath}/" class="dropdown-item">일정관리</a></li>
+                            <li><a href="#" class="dropdown-item">쪽지함</a></li>
+                            <li><a href="${pageContext.request.contextPath}/" class="dropdown-item">메일</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a href="${pageContext.request.contextPath}/member/pwd" class="dropdown-item">정보수정</a></li>
+                            <c:if test="${sessionScope.member.userLevel < 51}">
+                                <li><a href="${pageContext.request.contextPath}/member/pwd?mode=delete" class="dropdown-item">회원탈퇴</a></li>
+                            </c:if>
+                        </ul>
+                    </c:if>	
 				</div>
 			</div>
 		</div>

@@ -53,12 +53,12 @@
 
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
 						<li class="nav-item" role="presentation">
-							<button class="nav-link active" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">모두</button>
+							<button class="nav-link ${selectedCategoryNum==vo.categoryNum || selectedCategoryNum == 0 ?'active':''}" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">모두</button>
 						</li>
 						
 						<c:forEach var="vo" items="${listCategory}" varStatus="status">
 							<li class="nav-item" role="presentation">
-								<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="${vo.categoryNum}">${vo.category}</button>
+								<button class="nav-link ${selectedCategoryNum==vo.categoryNum?'active':''}" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="${vo.categoryNum}">${vo.category}</button>
 							</li>
 						</c:forEach>
 		

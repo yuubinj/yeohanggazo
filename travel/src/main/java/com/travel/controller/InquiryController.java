@@ -28,8 +28,10 @@ public class InquiryController {
 		InquiryDAO dao = new InquiryDAO();
 		try {
 			List<FaqDTO> listCategory = dao.listCategory(1);
+			String selectedCategoryNum = req.getParameter("categoryNum");
 			
 			mav.addObject("listCategory", listCategory);
+			mav.addObject("selectedCategoryNum", selectedCategoryNum);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,7 +110,7 @@ public class InquiryController {
 			
 			String cp = req.getContextPath();
 
-			String articleUrl = cp + "/inquiry/article?pageNo=" + current_page;
+			String articleUrl = cp + "/inquiry/article?pageNo=" + current_page + "&categoryNum=" + categoryNum;
 			if(query.length() != 0) {
 				articleUrl += "&" + query;
 			}
@@ -175,11 +177,9 @@ public class InquiryController {
 		MyUtil util = new MyUtil();
 		InquiryDAO dao = new InquiryDAO();
 		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
 		String pageNo = req.getParameter("pageNo");
-		String query = "pageNo=" + pageNo;
+		long categoryNum = Long.parseLong(req.getParameter("categoryNum"));
+		String query = "pageNo=" + pageNo + "&categoryNum=" + categoryNum;
 
 		try {
 			long num = Long.parseLong(req.getParameter("num"));
@@ -201,11 +201,11 @@ public class InquiryController {
 			}
 			dto.setQuestion(dto.getQuestion().replaceAll("\n", "<br>"));
 			
-			InquiryDTO prevDto = dao.findByPrev(num, schType, kwd);
-			InquiryDTO nextDto = dao.findByPrev(num, schType, kwd);			
+			InquiryDTO prevDto = dao.findByPrev(categoryNum, num, schType, kwd);
+			InquiryDTO nextDto = dao.findByNext(categoryNum, num, schType, kwd);
 			
 			ModelAndView mav = new ModelAndView("inquiry/article");
-
+			
 			mav.addObject("dto", dto);
 			mav.addObject("pageNo", pageNo);
 			mav.addObject("query", query);
@@ -287,16 +287,67 @@ public class InquiryController {
 	@RequestMapping(value = "/inquiry/delete", method = RequestMethod.GET)
 	public ModelAndView delete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		InquiryDAO dao = new InquiryDAO();
+		MyUtil util = new MyUtil();
 		
 		HttpSession session = req.getSession();
 		SessionInfo info = (SessionInfo)session.getAttribute("member");
 		
 		String pageNo = req.getParameter("pageNo");
+		String query = "pageNo=" + pageNo;
 		
+		try {
+			long num = Long.parseLong(req.getParameter("num"));
+			String mode = req.getParameter("mode");
+			
+			String schType = req.getParameter("schType");
+			String kwd = req.getParameter("kwd");
+			if(schType == null) {
+				schType = "all";
+				kwd = "";
+			}
+			kwd = util.decodeUrl(kwd);
+
+			if(kwd.length() != 0) {
+				query += "&schType=" + schType + "&kwd=" + util.encodeUrl(kwd);
+			}
+			
+			if(mode.equals("answer") && info.getUserLevel() >= 51) {
+				// 답변 삭제
+				InquiryDTO dto = new InquiryDTO();
+				dto.setNum(num);
+				dto.setAnswer("");
+				dto.setAnswerId("");
+				dao.updateAnswer(dto);
+			} else if(mode.equals("question")) {
+				// 질문 삭제
+				dao.deleteQuestion(num, info.getUserId(), info.getUserLevel());
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		
-		
-		return new ModelAndView("redirect:/inquiry/main?pageNo=" + pageNo);
+		return new ModelAndView("redirect:/inquiry/main?" + query);
 	}
+	
+	// AJAX-Text
+	@RequestMapping(value = "/admin/inquiry/listAllCategory", method = RequestMethod.GET)
+	public ModelAndView listCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/inquiry/listCategory");
+
+		InquiryDAO dao = new InquiryDAO();
+		try {
+			List<FaqDTO> listCategory = dao.listCategory(0);
+			
+			mav.addObject("listCategory", listCategory);
+			
+		} catch (Exception e) {
+			resp.sendError(406);
+			throw e;
+		}
+		
+		return mav;
+	}
+	
 	
 }

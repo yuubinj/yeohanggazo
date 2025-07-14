@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spring</title>
-<jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
+<jsp:include page="/WEB-INF/views/admin/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <style type="text/css">
 .min-h-150 {
@@ -18,7 +18,7 @@
 <body>
 
 <header>
-	<jsp:include page="/WEB-INF/views/layout/header.jsp"/>
+	<jsp:include page="/WEB-INF/views/admin/layout/header.jsp"/>
 </header>
 
 <main>
@@ -105,7 +105,7 @@
 								<c:choose>
 									<c:when test="${prevDto.secret==1}">
 										<c:if test="${sessionScope.member.userId==prevDto.userId || sessionScope.member.userLevel >= 99}">
-											<a href="${pageContext.request.contextPath}/inquiry/article?num=${prevDto.num}&${query}">${prevDto.subject}</a>
+											<a href="${pageContext.request.contextPath}/admin/inquiry/article?num=${prevDto.num}&${query}">${prevDto.subject}</a>
 										</c:if>
 										<c:if test="${sessionScope.member.userId!=prevDto.userId && sessionScope.member.userLevel < 99}">
 											비밀글 입니다.
@@ -113,7 +113,7 @@
 										<i class="bi bi-file-lock2"></i>
 									</c:when>
 									<c:otherwise>
-										<a href="${pageContext.request.contextPath}/inquiry/article?num=${prevDto.num}&${query}">${prevDto.subject}</a>
+										<a href="${pageContext.request.contextPath}/admin/inquiry/article?num=${prevDto.num}&${query}">${prevDto.subject}</a>
 									</c:otherwise>
 								</c:choose>
 							</c:if>
@@ -127,7 +127,7 @@
 								<c:choose>
 									<c:when test="${nextDto.secret==1}">
 										<c:if test="${sessionScope.member.userId==nextDto.userId || sessionScope.member.userLevel >= 99}">
-											<a href="${pageContext.request.contextPath}/inquiry/article?num=${nextDto.num}&${query}">${nextDto.subject}</a>
+											<a href="${pageContext.request.contextPath}/admin/inquiry/article?num=${nextDto.num}&${query}">${nextDto.subject}</a>
 										</c:if>
 										<c:if test="${sessionScope.member.userId!=nextDto.userId && sessionScope.member.userLevel < 99}">
 											비밀글 입니다.
@@ -135,25 +135,48 @@
 										<i class="bi bi-file-lock2"></i>
 									</c:when>
 									<c:otherwise>
-										<a href="${pageContext.request.contextPath}/inquiry/article?num=${nextDto.num}&${query}">${nextDto.subject}</a>
+										<a href="${pageContext.request.contextPath}/admin/inquiry/article?num=${nextDto.num}&${query}">${nextDto.subject}</a>
 									</c:otherwise>
 								</c:choose>
 							</c:if>
 						</div>
 
 						<div class="col-md-6 p-2 ps-0">
-							<c:if test="${sessionScope.member.userId==dto.userId && empty dto.answer}">
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/inquiry/update?num=${dto.num}&pageNo=${pageNo}';">수정</button>
+			    			<button type="button" class="btn btn-light" onclick="deleteOk('question');">문의삭제</button>
+				    		
+							<c:if test="${not empty dto.answer and sessionScope.member.userId==dto.answerId}">
+								<button type="button" class="btn btn-light btnUpdateAnswer" data-mode="update">답변수정</button>
 							</c:if>
-					    	
-				    		<c:if test="${sessionScope.member.userId==dto.userId || sessionScope.member.userLevel >= 51}">
-				    			<button type="button" class="btn btn-light" onclick="deleteOk('question');">삭제</button>
-				    		</c:if>
+							<c:if test="${not empty dto.answer && (sessionScope.member.userId==dto.answerId || sessionScope.member.userLevel == 99)}">
+								<button type="button" class="btn btn-light" onclick="deleteOk('answer');">답변삭제</button>
+							</c:if>
 						</div>
 						<div class="col-md-6 p-2 pe-0 text-end">
-							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/inquiry/main?${query}';">리스트</button>
+							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/admin/inquiry/main?${query}';">리스트</button>
 						</div>
 					</div>
+					
+					<form name="answerForm" class="answer-container d-none" method="post">
+						<div class="row p-2">
+								<div class="col-md-12 ps-0 pt-3 pb-1">
+									<span class="sm-title fw-bold">문의에 대한 답변</span>
+								</div>
+								
+								<div class="col-md-2 d-flex align-items-center justify-content-center bg-light border-top border-bottom p-2 min-h-70">
+									답 변
+								</div>
+								<div class="col-md-10 border-top border-bottom p-2 min-h-70">
+									<textarea class="form-control" name="answer">${dto.answer}</textarea>
+								</div>
+								
+								<div class="col-md-12 p-2 pe-0 text-end">
+							   		<input type="hidden" name="num" value="${dto.num}">	
+							   		<input type="hidden" name="pageNo" value="${pageNo}">
+							   		
+					       			<button type="button" class="btn btn-light btnSendAnswer">답변등록</button>
+								</div>
+						</div>
+					</form>
 
 				</div>
 			</div>
@@ -161,23 +184,64 @@
 	</div>
 </main>
 
-<c:if test="${sessionScope.member.userId==dto.userId || sessionScope.member.userLevel >= 99}">
-	<script type="text/javascript">
-		function deleteOk(mode) {
-			if(confirm('질문을 삭제 하시 겠습니까 ? ')) {
-				let query = 'num=${dto.num}&${query}&mode=' + mode;
-				let url = '${pageContext.request.contextPath}/inquiry/delete?' + query;
-				location.href = url;
-			}
+<script type="text/javascript">
+	function deleteOk(mode) {
+		let s = mode === 'question' ? '질문' : '답변';
+		
+		if(confirm(s + '을 삭제 하시 겠습니까 ? ')) {
+			let query = 'num=${dto.num}&${query}&mode=' + mode;
+			let url = '${pageContext.request.contextPath}/admin/inquiry/delete?' + query;
+			location.href = url;
 		}
-	</script>
-</c:if>
+	}
+	
+	window.addEventListener('DOMContentLoaded', ev => {
+		const answerEL = document.querySelector('.answer-container');
+		const btnSendEL = document.querySelector('.btnSendAnswer');
+		const btnUpdateEL = document.querySelector('.btnUpdateAnswer');
+		const answerId = '${dto.answerId}';
 
-<footer>
-	<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
-</footer>
+		btnSendEL.addEventListener('click', e => {
+			const f = document.answerForm;
+			if(! f.answer.value.trim()) {
+				f.answer.focus();
+				return false;
+			}
+			
+			f.action = '${pageContext.request.contextPath}/admin/inquiry/answer';
+			f.submit();
+		});
+		
+		if( ! answerId) {
+			answerEL.classList.remove('d-none');
+			// $('.answer-container').removeClass('d-none');
+		} else {
+			btnUpdateEL.addEventListener('click', function(e) {
+				let mode = btnUpdateEL.dataset.mode;
+				
+				if(mode === 'update') {
+					// $('.answer-container').show();
+					// $('.answer-container').removeClass('d-none');
+					
+					answerEL.classList.remove('d-none');
+					btnUpdateEL.textContent = '답변수정 취소'
+					btnUpdateEL.dataset.mode = 'cancel';
+				} else {
+					// $('.answer-container').hide();
+					// $('.answer-container').addClass('d-none');
+					
+					answerEL.classList.add('d-none');
+					btnUpdateEL.textContent = '답변수정'
+					btnUpdateEL.dataset.mode = 'update';
+				}
+			});
+		}
+	});
+</script>
 
-<jsp:include page="/WEB-INF/views/layout/footerResources.jsp"/>
+<jsp:include page="/WEB-INF/views/admin/layout/footer.jsp"/>
+
+<jsp:include page="/WEB-INF/views/admin/layout/footerResources.jsp"/>
 
 </body>
 </html>

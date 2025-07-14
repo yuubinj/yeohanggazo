@@ -359,19 +359,76 @@ public class InquiryDAO {
 	}
 	
 	// 이전 문의 보기
-	public InquiryDTO findByPrev(long num, String schType, String kwd) {
+	public InquiryDTO findByPrev(long categoryNum, long num, String schType, String kwd) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		StringBuilder sb = new StringBuilder();
 		InquiryDTO dto = null;
 		try {
-			// if(kwd != null && kwd.lenght)
-			sb.append(" SELECT num, subject ");
-			sb.append(" FROM inquiry ");
-			sb.append(" FROM inquiry ");
-			
-			dto = new InquiryDTO();
+			if(kwd != null && kwd.length() != 0) {
+				sb.append(" SELECT num, subject, secret, userId ");
+				sb.append(" FROM inquiry iq ");
+				sb.append(" JOIN member1 m ON m.userId = i.userId ");
+				sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
+				sb.append(" WHERE (fc.enabled = 1 AND num > ? ) AND ");				
+				if(schType.equals("all")) {
+					sb.append(" (INSTR(subject, ?) >= 1 OR INSTR(question, ?) >= 1 ) ");
+				} else if(schType.equals("reg_date")) {
+					kwd = kwd.replaceAll("(\\-|\\.|\\/)", "");
+					sb.append(" TO_CHAR(reg_date, 'YYYY-MM-DD') = ? ");
+				} else {
+					sb.append(" INSTR(" + schType + ", ?) >= 1");
+				}
+				if(categoryNum != 0) {
+					sb.append(" AND fc.categoryNum = ? ");
+				}
+				sb.append(" ORDER BY num ASC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
 
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, num);
+				if(schType.equals("all")) {
+					pstmt.setString(2, kwd);
+					pstmt.setString(3, kwd);
+					if(categoryNum != 0) {
+						pstmt.setLong(4, categoryNum);
+					}
+				} else {
+					pstmt.setString(2, kwd);
+					if(categoryNum != 0) {
+						pstmt.setLong(3, categoryNum);
+					}
+				}
+				
+			} else {
+				sb.append(" SELECT num, subject, secret, userId ");
+				sb.append(" FROM inquiry iq ");
+				sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
+				sb.append(" WHERE (fc.enabled = 1 AND num > ? ) ");
+				if(categoryNum != 0) {
+					sb.append(" AND fc.categoryNum = ? ");
+				}
+				sb.append(" ORDER BY num ASC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+				
+				pstmt = conn.prepareStatement(sb.toString());
+				pstmt.setLong(1, num);
+				if(categoryNum != 0) {
+					pstmt.setLong(2, categoryNum);
+				}
+			}
+
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new InquiryDTO();
+				dto.setNum(rs.getLong("num"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setSecret(rs.getInt("secret"));
+				dto.setUserId(rs.getString("userId"));
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -380,9 +437,80 @@ public class InquiryDAO {
 	}
 	
 	// 다음 문의 보기
-	public InquiryDTO findByNext(long num, String schType, String kwd) {
-		InquiryDTO dto = new InquiryDTO();
-		
+	public InquiryDTO findByNext(long categoryNum, long num, String schType, String kwd) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		StringBuilder sb = new StringBuilder();
+		InquiryDTO dto = null;
+		try {
+			if(kwd != null && kwd.length() != 0) {
+				sb.append(" SELECT num, subject, secret, userId ");
+				sb.append(" FROM inquiry iq ");
+				sb.append(" JOIN member1 m ON m.userId = i.userId ");
+				sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
+				sb.append(" WHERE (fc.enabled = 1 AND num < ? ) AND ");				
+				if(schType.equals("all")) {
+					sb.append(" (INSTR(subject, ?) >= 1 OR INSTR(question, ?) >= 1 ) ");
+				} else if(schType.equals("reg_date")) {
+					kwd = kwd.replaceAll("(\\-|\\.|\\/)", "");
+					sb.append(" TO_CHAR(reg_date, 'YYYY-MM-DD') = ? ");
+				} else {
+					sb.append(" INSTR(" + schType + ", ?) >= 1");
+				}
+				if(categoryNum != 0) {
+					sb.append(" AND fc.categoryNum = ? ");
+				}
+				sb.append(" ORDER BY num DESC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+
+				pstmt = conn.prepareStatement(sb.toString());
+				
+				pstmt.setLong(1, num);
+				if(schType.equals("all")) {
+					pstmt.setString(2, kwd);
+					pstmt.setString(3, kwd);
+					if(categoryNum != 0) {
+						pstmt.setLong(4, categoryNum);
+					}
+				} else {
+					pstmt.setString(2, kwd);
+					if(categoryNum != 0) {
+						pstmt.setLong(3, categoryNum);
+					}
+				}
+				
+			} else {
+				sb.append(" SELECT num, subject, secret, userId ");
+				sb.append(" FROM inquiry iq ");
+				sb.append(" JOIN faqCategory fc ON fc.categoryNum = iq.categoryNum ");
+				sb.append(" WHERE (fc.enabled = 1 AND num < ? ) ");
+				if(categoryNum != 0) {
+					sb.append(" AND fc.categoryNum = ? ");
+				}
+				sb.append(" ORDER BY num DESC ");
+				sb.append(" FETCH FIRST 1 ROWS ONLY ");
+				
+				pstmt = conn.prepareStatement(sb.toString());
+				pstmt.setLong(1, num);
+				if(categoryNum != 0) {
+					pstmt.setLong(2, categoryNum);					
+				}
+			}
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				dto = new InquiryDTO();
+				dto.setNum(rs.getLong("num"));
+				dto.setSubject(rs.getString("subject"));
+				dto.setSecret(rs.getInt("secret"));
+				dto.setUserId(rs.getString("userId"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return dto;
 	}
 	
@@ -415,16 +543,82 @@ public class InquiryDAO {
 	
 	// 데이터 수정 - 질문에 대한 답 등록
 	public void updateAnswer(InquiryDTO dto) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql = null;
 		
+		try {
+			sql = "UPDATE inquiry SET answerId = ?, answer = ?, ";
+			if(dto.getAnswer().length() == 0) {
+				sql += " answer_date = NULL ";
+			} else {
+				sql += " answer_date = SYSDATE ";
+			}
+			sql += " WHERE num = ? ";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, dto.getAnswerId());
+			pstmt.setString(2, dto.getAnswer());
+			pstmt.setLong(3, dto.getNum());
+			
+			pstmt.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
 	}
 	
 	// 데이터 삭제 - 질문 삭제
 	public void deleteQuestion(long num, String userId, int userLevel) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql = null;
 		
+		try {
+			if(userLevel >= 99) {
+				sql = "DELETE FROM inquiry WHERE num = ? ";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				
+				pstmt.executeUpdate();
+			} else {
+				sql = "DELETE FROM inquiry WHERE num = ? AND userId = ? ";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				pstmt.setString(2, userId);
+				
+				pstmt.executeUpdate();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
 	}
 	
+	/*
 	// 데이터 삭제 - 질문에 대한 답 삭제
 	public void deleteAnswer(long num, String userId, int userLevel) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql = null;
 		
+		try {
+			if(userLevel >= 99) {
+				sql = "UPDATE inquiry SET answerId = null, answer = null, answer_date = NULL "
+						+ " WHERE num = ? ";
+				pstmt = conn.prepareStatement(sql);
+				
+				pstmt.setLong(1, num);
+				
+				pstmt.executeUpdate();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
 	}
+	*/
 }

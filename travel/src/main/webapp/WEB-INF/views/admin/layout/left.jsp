@@ -45,13 +45,13 @@
 	
 			<ul class="sub_menu">
 				<li class="sub_menu--item">
-					<a href="<c:url value='/admin' />" class="sub_menu--link">자주하는 질문</a>
+					<a href="<c:url value='/admin/faq/main' />" class="sub_menu--link">자주하는 질문</a>
 				</li>
 				<li class="sub_menu--item">
 					<a href="<c:url value='/admin/notice/list' />" class="sub_menu--link">공지사항</a>
 				</li>
 				<li class="sub_menu--item">
-					<a href="<c:url value='/admin' />" class="sub_menu--link">문의</a>
+					<a href="<c:url value='/admin/inquiry/main' />" class="sub_menu--link">문의</a>
 				</li>
 				<li class="sub_menu--item">
 					<a href="<c:url value='/admin' />" class="sub_menu--link">이벤트</a>
@@ -106,7 +106,7 @@
 		</li>
 	
 		<li class="menu--item">
-	        <a href="<c:url value='/'/>" class="menu--link" title="Logout">
+	        <a href="<c:url value='/member/logout'/>" class="menu--link" title="Logout">
 				<i class="menu--icon bi bi-unlock"></i>
 				<span class="menu--label">Logout</span>
 			</a>
