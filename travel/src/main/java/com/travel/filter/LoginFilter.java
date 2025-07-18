@@ -117,7 +117,9 @@ public class LoginFilter implements Filter {
 			"/index.jsp", "/main",
 			"/member/login", "/member/logout",
 			"/member/account", "/member/userIdCheck", "/member/complete",
-			"/notice/list",
+			"/notice/list", 
+			"/bbs/list", "/bbs/article", "/bbs/listReply","/bbs/listReplyAnswer", "/bbs/countReplyAnswer",
+			"/faq/main", "/faq/list",
 			"/uploads/photo/**",
 			"/dist/**"	
 		};

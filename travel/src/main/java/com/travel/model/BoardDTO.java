@@ -1,15 +1,22 @@
 package com.travel.model;
 
-public class FaqDTO {
+public class BoardDTO {
 	private long num;
-    private Long memberIdx;
-    private String userId;
-    private String userName;
-    private String subject;
-    private String content;
-    private String reg_date;
-    
-    private long categoryNum;
+	private String userId;
+	private String userName;
+	private String subject;
+	private String content;
+	private String reg_date;
+	private int hitCount;
+	private int block;
+	
+	private String saveFilename;
+	private String originalFilename;
+	
+	private int replyCount;
+	private int boardLikeCount;
+	
+	private int categoryNum;
     private String category;
     private int enabled;
     private int orderNo;
@@ -19,12 +26,6 @@ public class FaqDTO {
 	}
 	public void setNum(long num) {
 		this.num = num;
-	}
-	public Long getMemberIdx() {
-		return memberIdx;
-	}
-	public void setMemberIdx(Long memberIdx) {
-		this.memberIdx = memberIdx;
 	}
 	public String getUserId() {
 		return userId;
@@ -56,10 +57,46 @@ public class FaqDTO {
 	public void setReg_date(String reg_date) {
 		this.reg_date = reg_date;
 	}
+	public int getHitCount() {
+		return hitCount;
+	}
+	public void setHitCount(int hitCount) {
+		this.hitCount = hitCount;
+	}
+	public int getBlock() {
+		return block;
+	}
+	public void setBlock(int block) {
+		this.block = block;
+	}
+	public String getSaveFilename() {
+		return saveFilename;
+	}
+	public void setSaveFilename(String saveFilename) {
+		this.saveFilename = saveFilename;
+	}
+	public String getOriginalFilename() {
+		return originalFilename;
+	}
+	public void setOriginalFilename(String originalFilename) {
+		this.originalFilename = originalFilename;
+	}
+	public int getReplyCount() {
+		return replyCount;
+	}
+	public void setReplyCount(int replyCount) {
+		this.replyCount = replyCount;
+	}
+	public int getBoardLikeCount() {
+		return boardLikeCount;
+	}
+	public void setBoardLikeCount(int boardLikeCount) {
+		this.boardLikeCount = boardLikeCount;
+	}
 	public long getCategoryNum() {
 		return categoryNum;
 	}
-	public void setCategoryNum(long categoryNum) {
+	public void setCategoryNum(int categoryNum) {
 		this.categoryNum = categoryNum;
 	}
 	public String getCategory() {
@@ -80,5 +117,6 @@ public class FaqDTO {
 	public void setOrderNo(int orderNo) {
 		this.orderNo = orderNo;
 	}
+    
     
 }
