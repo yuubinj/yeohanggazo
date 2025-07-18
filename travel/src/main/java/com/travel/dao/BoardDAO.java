@@ -111,7 +111,7 @@ public class BoardDAO {
     	StringBuilder sb = new StringBuilder();
     	
     	try {
-    		sb.append(" SELECT b.num, c.category, m.userName, b.subject, b.content, ");
+    		sb.append(" SELECT b.num, b.categoryNum, c.category, m.userName, b.subject, b.content, ");
     		sb.append(" b.saveFilename, b.originalFilename, ");
     		sb.append(" NVL(r.replyCount, 0) replyCount, ");
     		sb.append(" b.hitCount, TO_CHAR(b.reg_date, 'YYYY-MM-DD') reg_date, ");
@@ -143,6 +143,7 @@ public class BoardDAO {
     		while (rs.next()) {
     			BoardDTO dto = new BoardDTO();
     			dto.setNum(rs.getLong("num"));
+    			dto.setCategoryNum(rs.getInt("categoryNum"));
     			dto.setCategory(rs.getString("category"));
     			dto.setUserName(rs.getString("userName"));
     			dto.setSubject(rs.getString("subject"));
@@ -174,7 +175,7 @@ public class BoardDAO {
         StringBuilder sb = new StringBuilder();
 
         try {
-            sb.append(" SELECT b.num, c.category, m.userName, b.subject, b.content, ");
+            sb.append(" SELECT b.num, b.categoryNum, c.category, m.userName, b.subject, b.content, ");
             sb.append(" b.saveFilename, b.originalFilename, ");
             sb.append(" NVL(r.replyCount, 0) replyCount, ");
             sb.append(" b.hitCount, TO_CHAR(b.reg_date, 'YYYY-MM-DD') reg_date, ");
@@ -200,6 +201,7 @@ public class BoardDAO {
             while (rs.next()) {
                 BoardDTO dto = new BoardDTO();
                 dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
                 dto.setCategory(rs.getString("category"));
                 dto.setUserName(rs.getString("userName"));
                 dto.setSubject(rs.getString("subject"));
@@ -229,7 +231,7 @@ public class BoardDAO {
     	StringBuilder sb = new StringBuilder();
 
     	try {
-    		sb.append(" SELECT b.num, c.category, m.userName, b.subject, b.content, ");
+    		sb.append(" SELECT b.num, b.categoryNum, c.category, m.userName, b.subject, b.content, ");
     		sb.append(" b.saveFilename, b.originalFilename, ");
     		sb.append(" NVL(r.replyCount, 0) replyCount, ");
     		sb.append(" b.hitCount, TO_CHAR(b.reg_date, 'YYYY-MM-DD') reg_date, ");
@@ -283,6 +285,7 @@ public class BoardDAO {
     			BoardDTO dto = new BoardDTO();
 
     			dto.setNum(rs.getLong("num"));
+    			dto.setCategoryNum(rs.getInt("categoryNum"));
     			dto.setCategory(rs.getString("category"));
     			dto.setUserName(rs.getString("userName"));
     			dto.setSubject(rs.getString("subject"));
@@ -315,7 +318,7 @@ public class BoardDAO {
     	StringBuilder sb = new StringBuilder();
     	
     	try {
-    		sb.append(" SELECT b.num, c.category, m.userName, b.subject, b.content, ");
+    		sb.append(" SELECT b.num, b.categoryNum, c.category, m.userName, b.subject, b.content, ");
     		sb.append(" b.saveFilename, b.originalFilename, ");
             sb.append(" NVL(r.replyCount, 0) replyCount, ");
     		sb.append(" b.hitCount, TO_CHAR(b.reg_date, 'YYYY-MM-DD') reg_date, ");
@@ -366,6 +369,7 @@ public class BoardDAO {
     			BoardDTO dto = new BoardDTO();
 
     			dto.setNum(rs.getLong("num"));
+    			dto.setCategoryNum(rs.getInt("categoryNum"));
     			dto.setCategory(rs.getString("category"));
     			dto.setUserName(rs.getString("userName"));
     			dto.setSubject(rs.getString("subject"));
@@ -543,7 +547,7 @@ public class BoardDAO {
 		String sql;
 
 		try {
-			sql = "SELECT b.num, category, b.userId, userName, subject, content, "
+			sql = "SELECT b.num, b.categoryNum, category, b.userId, userName, subject, content, "
 					+ "   saveFilename, originalFilename, reg_date, hitCount, block, "
 					+ "   NVL(boardLikeCount, 0) boardLikeCount "
 					+ " FROM bbs b "
@@ -564,6 +568,7 @@ public class BoardDAO {
 				dto = new BoardDTO();
 				
 				dto.setNum(rs.getLong("num"));
+				dto.setCategoryNum(rs.getInt("categoryNum"));
 				dto.setCategory(rs.getString("category"));
 				dto.setUserId(rs.getString("userId"));
 				dto.setUserName(rs.getString("userName"));

@@ -191,7 +191,7 @@ public class BoardController {
 			e.printStackTrace();
 		}
 
-		return new ModelAndView("redirect:/bbs/list?categoryNum=" + categoryNum);
+		return new ModelAndView("redirect:/bbs/list?categoryNum=0");
 	}
 
 	@RequestMapping(value = "/bbs/article", method = RequestMethod.GET)
@@ -258,7 +258,7 @@ public class BoardController {
 			
 			// JSP로 전달할 속성
 			ModelAndView mav = new ModelAndView("bbs/article");
-			mav.addObject("categoryNum", categoryNum);
+			mav.addObject("categoryNum", nCategory);
 			mav.addObject("dto", dto);
 			mav.addObject("page", page);
 			mav.addObject("query", query);
@@ -813,5 +813,6 @@ public class BoardController {
 
 		return model;
 	}
+
 
 }

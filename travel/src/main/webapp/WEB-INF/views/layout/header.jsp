@@ -86,9 +86,9 @@
 							커뮤니티
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="${pageContext.request.contextPath}/">자유게시판</a></li>
+							<li><a class="dropdown-item" href="${pageContext.request.contextPath}/bbs/list">자유게시판</a></li>
 							<li><a class="dropdown-item" href="${pageContext.request.contextPath}/inquiry/main">문의</a></li>
-							<li><a class="dropdown-item" href="${pageContext.request.contextPath}/">FAQ</a></li>
+							<li><a class="dropdown-item" href="${pageContext.request.contextPath}/faq/main">FAQ</a></li>
 							<li><hr class="dropdown-divider"></li>
 							<li><a class="dropdown-item" href="#">자료실</a></li>
 						</ul>

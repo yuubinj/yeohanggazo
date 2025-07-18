@@ -9,9 +9,6 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 
-<!-- 스마트에디터 JS -->
-<script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
-
 </head>
 <body>
 <header>
@@ -95,28 +92,6 @@
 </main>
 
 <script type="text/javascript">
-var oEditors = [];
-nhn.husky.EZCreator.createInIFrame({
-    oAppRef: oEditors,
-    elPlaceHolder: "ir1",
-    sSkinURI: "${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html",
-    fCreator: "createSEditor2",
-    fOnBeforeUnload: function(){},
-    fOnAppLoad: function() {
-        oEditors.getById["ir1"].setDefaultFont("돋움", 12);
-    }
-});
-
-function submitContents(elClickedObj) {
-	try {
-		oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []);
-		if (!check()) return;
-		elClickedObj.submit();
-	} catch (e) {
-		console.log(e);
-	}
-}
-
 function check() {
 	const f = document.postForm;
 
@@ -148,7 +123,6 @@ function check() {
 	return true;
 }
 
-
 <c:if test="${mode=='update'}">
 function deleteFile(num) {
 	if (!confirm("파일을 삭제하시겠습니까?")) return;
@@ -157,6 +131,34 @@ function deleteFile(num) {
 </c:if>
 </script>
 
+
+<script type="text/javascript" src="${pageContext.request.contextPath}/dist/vendor/se2/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+<script type="text/javascript">
+var oEditors = [];
+nhn.husky.EZCreator.createInIFrame({
+	oAppRef: oEditors,
+	elPlaceHolder: 'ir1',
+	sSkinURI: '${pageContext.request.contextPath}/dist/vendor/se2/SmartEditor2Skin.html',
+	fCreator: 'createSEditor2',
+	fOnAppLoad: function(){
+		// 로딩 완료 후
+		oEditors.getById['ir1'].setDefaultFont('돋움', 12);
+	},
+});
+
+function submitContents(elClickedObj) {
+	 oEditors.getById['ir1'].exec('UPDATE_CONTENTS_FIELD', []);
+	 try {
+		if(! check()) {
+			return;
+		}
+		
+		elClickedObj.submit();
+		
+	} catch(e) {
+	}
+}
+</script>
 <footer>
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
 </footer>

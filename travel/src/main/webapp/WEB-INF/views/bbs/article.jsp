@@ -21,10 +21,13 @@
 			<div class="col-md-10 my-3 p-3">
 				<div class="body-title">
 					<h3><i class="bi bi-book-half"></i> 
-						${categoryNum == 1 ? "공지" : 
-						  categoryNum == 2 ? "현지인 추천" :
-						  categoryNum == 3 ? "리뷰" :
-						  categoryNum == 4 ? "기타" : "전체"} 게시글
+						<c:choose>
+							<c:when test="${categoryNum == 1}">공지</c:when>
+						  	<c:when test="${categoryNum == 2}">현지인 추천</c:when>
+						  	<c:when test="${categoryNum == 3}">리뷰</c:when>
+						  	<c:when test="${categoryNum == 4}">기타</c:when>
+						  	<c:otherwise>전체</c:otherwise>
+						</c:choose> 게시글
 					</h3>
 				</div>
 				
@@ -276,7 +279,7 @@ $(function(){
 					$i.removeClass('bi-hand-thumbs-up').addClass('bi-hand-thumbs-up-fill');
 				}
 				
-				let count = data.likeCount;
+				let count = data.boardLikeCount;
 				$('#likeCount').text(count);
 			} else if(state === 'liked') {
 				alert('게시글 공감은 한번만 가능합니다. !!!');
