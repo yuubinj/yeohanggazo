@@ -9,6 +9,7 @@
 <title>Spring</title>
 <jsp:include page="/WEB-INF/views/admin/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 <style type="text/css">
 .min-h-150 {
    min-height: 150px;

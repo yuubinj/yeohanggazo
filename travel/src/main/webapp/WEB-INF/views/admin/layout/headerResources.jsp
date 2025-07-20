@@ -13,6 +13,7 @@
 <!-- Core CSS Files -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/core.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/main2.css" type="text/css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.7.2/css/all.css">
 
 <!-- Vendor JS Files -->
 <script src="${pageContext.request.contextPath}/dist/vendor/jquery/js/jquery.min.js"></script>

@@ -1,8 +1,11 @@
 package com.travel.controller.admin;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.travel.dao.FaqDAO;
 import com.travel.dao.InquiryDAO;
 import com.travel.model.FaqDTO;
 import com.travel.model.InquiryDTO;
@@ -10,6 +13,7 @@ import com.travel.model.SessionInfo;
 import com.travel.mvc.annotation.Controller;
 import com.travel.mvc.annotation.RequestMapping;
 import com.travel.mvc.annotation.RequestMethod;
+import com.travel.mvc.annotation.ResponseBody;
 import com.travel.mvc.view.ModelAndView;
 import com.travel.util.MyUtil;
 
@@ -134,7 +138,7 @@ public class InquiryManageController {
 		return mav;
 	}
 	
-	
+	/*
 	// 글쓰기 폼
 	@RequestMapping(value = "/admin/inquiry/write", method = RequestMethod.GET)
 	public ModelAndView writeForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -170,6 +174,7 @@ public class InquiryManageController {
 		
 		return new ModelAndView("redirect:/admin/inquiry/list");
 	}
+	*/
 	
 	// 글보기
 	@RequestMapping(value = "/admin/inquiry/article", method = RequestMethod.GET)
@@ -220,6 +225,7 @@ public class InquiryManageController {
 		return new ModelAndView("redirect:/admin/inquiry/main?" + query);
 	}
 	
+	/*
 	// 글 수정 폼
 	@RequestMapping(value = "/admin/inquiry/update", method = RequestMethod.GET)
 	public ModelAndView updateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -282,6 +288,7 @@ public class InquiryManageController {
 		
 		return new ModelAndView("redirect:/admin/inquiry/main?pageNo=" + pageNo);
 	}
+	*/
 	
 	@RequestMapping(value = "/admin/inquiry/answer", method = RequestMethod.POST)
 	public ModelAndView answerSubmit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -354,5 +361,98 @@ public class InquiryManageController {
 		
 		return new ModelAndView("redirect:/admin/inquiry/main?" + query);
 	}
-	
+	/*
+	// 카테고리 관리 - 카테고리 보기
+	@RequestMapping(value = "/admin/inquiry/listAllCategory", method = RequestMethod.GET)
+	public ModelAndView listCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		ModelAndView mav = new ModelAndView("admin/inquiry/listCategory");
+
+		InquiryDAO dao = new InquiryDAO();
+		try {
+			List<FaqDTO> listCategory = dao.listCategory(0);
+			
+			mav.addObject("listCategory", listCategory);
+			
+		} catch (Exception e) {
+			resp.sendError(406);
+			throw e;
+		}
+		
+		return mav;
+	}
+	*/
+	// AJAX-JSON
+	@ResponseBody
+	@RequestMapping(value = "/admin/inquiry/insertCategory", method = RequestMethod.POST)
+	public Map<String, Object> insertCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		String state = "false";
+		
+		FaqDAO dao = new FaqDAO();
+		try {
+			FaqDTO dto = new FaqDTO();
+			
+			dto.setCategory(req.getParameter("category"));
+			dto.setOrderNo(Integer.parseInt(req.getParameter("orderNo")));
+			dto.setEnabled(Integer.parseInt(req.getParameter("enabled")));
+			
+			dao.insertFaqCategory(dto);
+			
+			state = "true";
+		} catch (Exception e) {
+		}
+		
+		model.put("state", state);
+		
+		return model;
+	}
+
+	// AJAX-JSON
+	@ResponseBody
+	@RequestMapping(value = "/admin/inquiry/updateCategory", method = RequestMethod.POST)
+	public Map<String, Object> updateCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		FaqDAO dao = new FaqDAO();
+		
+		String state = "false";
+		try {
+			FaqDTO dto = new FaqDTO();
+			
+			dto.setCategoryNum(Long.parseLong(req.getParameter("categoryNum")));
+			dto.setCategory(req.getParameter("category"));
+			dto.setOrderNo(Integer.parseInt(req.getParameter("orderNo")));
+			dto.setEnabled(Integer.parseInt(req.getParameter("enabled")));
+			
+			dao.updateFaqCategory(dto);
+			
+			state = "true";
+		} catch (Exception e) {
+		}
+		
+		model.put("state", state);
+		
+		return model;
+	}
+
+	// AJAX-JSON
+	@ResponseBody
+	@RequestMapping(value = "/admin/inquiry/deleteCategory", method = RequestMethod.POST)
+	public Map<String, Object> deleteCategory(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		FaqDAO dao = new FaqDAO();
+		
+		String state = "false";
+		try {
+			long categoryNum = Long.parseLong(req.getParameter("categoryNum"));
+			dao.deleteFaqCategory(categoryNum);
+			state = "true";
+		} catch (Exception e) {
+		}
+
+		model.put("state", state);
+		
+		return model;
+	}
 }

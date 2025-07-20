@@ -10,7 +10,7 @@ html {
 body {
   color: #333333;	
   font-size: 14px;
-  font-family: "Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
+  font-family: Pretendard, system-ui, -apple-system, Helvetica Neue, Segoe UI, Apple SD Gothic Neo, Noto Sans KR, sans-serif;
 }
 
 a { text-decoration: none; color: #333333; }

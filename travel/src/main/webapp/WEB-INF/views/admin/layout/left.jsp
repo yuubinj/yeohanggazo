@@ -17,74 +17,33 @@
 				<span class="menu--label">회원관리</span>
 			</a>
 		</li>
-	
-		<li class="menu--item menu--item__has_sub_menu">
-			<label class="menu--link" title="강좌관리">
-				<i class="menu--icon bi bi-book-half"></i>
-				<span class="menu--label">강좌관리</span>
-			</label>
-		
-			<ul class="sub_menu">
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">카테고리</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">강좌</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">강사</a>
-				</li>
-			</ul>
-		</li>
 			
 		<li class="menu--item menu--item__has_sub_menu">
-			<label class="menu--link" title="고객센터관리">
+			<label class="menu--link" title="커뮤니티 관리">
 				<i class="menu--icon bi bi-question-square"></i>
-				<span class="menu--label">커뮤니티관리</span>
+				<span class="menu--label">커뮤니티 관리</span>
 			</label>
 	
 			<ul class="sub_menu">
-				<li class="sub_menu--item">
-					<a href="<c:url value='/admin/faq/main' />" class="sub_menu--link">자주하는 질문</a>
-				</li>
 				<li class="sub_menu--item">
 					<a href="<c:url value='/bbs/list?categoryNum=1' />" class="sub_menu--link">공지사항</a>
 				</li>
 				<li class="sub_menu--item">
+					<a href="<c:url value='/admin/myTrip/list' />" class="sub_menu--link">내 여행 자랑하기</a>
+				</li>
+				<li class="sub_menu--item">
+					<a href="<c:url value='/admin/faq/main' />" class="sub_menu--link">자주하는 질문</a>
+				</li>
+				<li class="sub_menu--item">
 					<a href="<c:url value='/admin/inquiry/main' />" class="sub_menu--link">문의</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">신고</a>
-				</li>
-			</ul>
-		</li>
-	
-		<li class="menu--item menu--item__has_sub_menu">
-			<label class="menu--link" title="서비스관리">
-				<i class="menu--icon bi bi-x-diamond-fill"></i>
-				<span class="menu--label">서비스관리</span>
-			</label>
-
-			<ul class="sub_menu">
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">맛집정보</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">레시피</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">관광정보</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="#" class="sub_menu--link">날씨</a>
 				</li>
 			</ul>
 		</li>
 	
 		<li class="menu--item">
-	        <a href="#" class="menu--link" title="쇼핑관리">
-				<i class="menu--icon bi bi-bag"></i>
-				<span class="menu--label">쇼핑관리</span>
+	        <a href="<c:url value='/admin/ad/list' />" class="menu--link" title="광고글 관리">
+				<i class="menu--icon bi bi-person-square"></i>
+				<span class="menu--label">광고글 관리</span>
 			</a>
 		</li>
 	

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 /* header */
-.fixed-top { position: fixed; top: 0; left: 0; right: 0; z-index: 9999; }
+.fixed-top { position: fixed; top: 0; left: 0; right: 0; z-index: 999; }
 
 header {
 	background: #f8f9fa;
@@ -51,10 +51,11 @@ header .img-person {
 .vertical_nav {
   position: absolute;
   left: -200px;
+  height: 100%;
   top: 50px;
   bottom: 0px;
   width: 200px;
-  z-index: 9998;
+  z-index: 998;
   background: #f8f9fa; }
 
 .vertical_nav__closed {
@@ -160,7 +161,8 @@ header .img-person {
 
 @media (min-width: 992px) {
   .vertical_nav {
-    left: 0; }
+    left: 0;
+    height: 100%; }
 
   .toggle_menu {
     display: none; }
@@ -282,7 +284,7 @@ main { margin-top: 55px; }
 .body-title h3 {
     font-size: 23px;
     min-width: 300px;
-    font-family:"Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
+    font-family:Pretendard, system-ui, -apple-system, Helvetica Neue, Segoe UI, Apple SD Gothic Neo, Noto Sans KR, sans-serif;
     font-weight: bold;
     margin: 0 0 -5px 0;
     padding-bottom: 5px;

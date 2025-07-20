@@ -117,11 +117,12 @@ public class LoginFilter implements Filter {
 			"/index.jsp", "/main",
 			"/member/login", "/member/logout",
 			"/member/account", "/member/userIdCheck", "/member/complete",
-			"/notice/list", 
-			"/bbs/list", "/bbs/article", "/bbs/listReply","/bbs/listReplyAnswer", "/bbs/countReplyAnswer",
-			"/faq/main", "/faq/list",
+			"/notice/list", "/bbs/list", "/bbs/article", "/bbs/listReply","/bbs/listReplyAnswer", "/bbs/countReplyAnswer",
 			"/uploads/photo/**",
-			"/dist/**"	
+			"/uploads/myTrip/**",
+			"/dist/**", "/inquiry/main", "/inquiry/list", "/inquiry/article",
+			"/inquiry/listAllCategory", "/faq/main", "/faq/list", "/myTrip/**",
+			 "/theme/main", "/location/main", "/location/weatherXML"
 		};
 		
 		if(uri.length() <= 1) {
