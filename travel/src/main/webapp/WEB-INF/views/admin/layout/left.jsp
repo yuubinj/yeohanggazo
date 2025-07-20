@@ -26,7 +26,7 @@
 	
 			<ul class="sub_menu">
 				<li class="sub_menu--item">
-					<a href="<c:url value='/bbs/list?categoryNum=1' />" class="sub_menu--link">공지사항</a>
+					<a href="<c:url value='/admin/bbs/list' />" class="sub_menu--link">공지사항</a>
 				</li>
 				<li class="sub_menu--item">
 					<a href="<c:url value='/admin/myTrip/list' />" class="sub_menu--link">내 여행 자랑하기</a>
