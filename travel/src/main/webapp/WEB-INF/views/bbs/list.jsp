@@ -24,7 +24,11 @@
 
 /* 카테고리별 배경색 */
 .category-1 { 
-	background-color: #dc3545; color: white;	/* 공지 - 빨강 */
+    background-color: #ffe6e9;  /* 연한 분홍 배경 */
+    color: #ff6b81;             /* 밝은 빨강 텍스트 */
+    border: 1px solid #ff6b81;  /* 테두리도 동일 색상 */
+    font-weight: 600;
+    border-radius: 6px;
 }    
 .category-2 { 
 	background-color: #198754; color: white;	/* 현지인 추천 - 초록 */
@@ -86,15 +90,20 @@
 								<tr>
 									<td>
 									  <c:choose>
-									    <c:when test="${dto.category == '공지'}">공지</c:when>
-									    <c:otherwise>${dataCount - (page-1) * size - status.index}</c:otherwise>
+									    <c:when test="${dto.category == '공지'}">
+									      <span class="category-badge category-1">공지</span>
+									    </c:when>
+									    <c:otherwise>
+									      ${dataCount - (page-1) * size - status.index}
+									    </c:otherwise>
 									  </c:choose>
 									</td>
 									<td class="left">
 										<div class="text-wrap">
 											<c:url var="articleLink" value="/bbs/article">
 											    <c:param name="num" value="${dto.num}" />
-											    <c:param name="categoryNum" value="${dto.categoryNum}" />
+											    <c:param name="categoryNum" value="${dto.categoryNum}" /> <!-- 글의 카테고리 -->
+    											<c:param name="listCategoryNum" value="${categoryNum}" /> <!-- 리스트에서 선택한 카테고리 -->
 											    <c:param name="page" value="${page}" />
 											    <c:if test="${not empty schType}">
 											        <c:param name="schType" value="${schType}" />

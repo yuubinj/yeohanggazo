@@ -16,13 +16,13 @@
 }
 
 .faq-subject {
+	position: relative;
 	font-size: 16px;
 	font-weight: 600;
 	cursor: pointer;
 	margin: 0;
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
 	padding: 14px 20px;
 	border-bottom: 1px solid #eee;
 	color: #222;
@@ -40,10 +40,13 @@
 	font-weight: bold;
 }
 
+
 .faq-subject .faq-category {
+	position: absolute;
+	left: 85%; 
 	color: #888;
 	font-size: 14px;
-	margin-left: 10px;
+	white-space: nowrap;
 }
 
 .faq-answer {

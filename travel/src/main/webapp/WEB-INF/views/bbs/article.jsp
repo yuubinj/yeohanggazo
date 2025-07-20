@@ -92,43 +92,43 @@
 							</tr>
 							
 							<tr>
-							  <td colspan="2">
-							    다음글 :
-							    <c:if test="${not empty nextDto}">
-							      <c:url var="nextLink" value="/bbs/article">
-							        <c:param name="num" value="${nextDto.num}" />
-							        <c:param name="categoryNum" value="${categoryNum}" />
-							        <c:param name="page" value="${page}" />
-							        <c:if test="${not empty schType}">
-							          <c:param name="schType" value="${schType}" />
-							        </c:if>
-							        <c:if test="${not empty kwd}">
-							          <c:param name="kwd" value="${kwd}" />
-							        </c:if>
-							      </c:url>
-							      <a href="${nextLink}">[${nextDto.category}] ${nextDto.subject}</a>
-							    </c:if>
-							  </td>
+								<td colspan="2">
+								  다음글 :
+								  <c:if test="${not empty nextDto}">
+								  <c:url var="nextLink" value="/bbs/article">
+								    <c:param name="num" value="${nextDto.num}" />
+								    <c:param name="categoryNum" value="${nextDto.categoryNum}" />
+								    <c:param name="page" value="${page}" />
+								    <c:if test="${not empty schType}">
+								      <c:param name="schType" value="${schType}" />
+								    </c:if>
+								    <c:if test="${not empty kwd}">
+								      <c:param name="kwd" value="${kwd}" />
+								    </c:if>
+								  </c:url>
+								  <a href="${nextLink}">[${nextDto.category}] ${nextDto.subject}</a>
+								</c:if>
+								</td>
 							</tr>
-							
-							<tr>
-							  <td colspan="2">
-							    이전글 :
-							    <c:if test="${not empty prevDto}">
-							      <c:url var="prevLink" value="/bbs/article">
-							        <c:param name="num" value="${prevDto.num}" />
-							        <c:param name="categoryNum" value="${categoryNum}" />
-							        <c:param name="page" value="${page}" />
-							        <c:if test="${not empty schType}">
-							          <c:param name="schType" value="${schType}" />
-							        </c:if>
-							        <c:if test="${not empty kwd}">
-							          <c:param name="kwd" value="${kwd}" />
-							        </c:if>
-							      </c:url>
-							      <a href="${prevLink}">[${prevDto.category}] ${prevDto.subject}</a>
-							    </c:if>
-							  </td>
+								
+								<tr>
+								  <td colspan="2">
+								    이전글 :
+								    <c:if test="${not empty prevDto}">
+								  <c:url var="prevLink" value="/bbs/article">
+								    <c:param name="num" value="${prevDto.num}" />
+								    <c:param name="categoryNum" value="${prevDto.categoryNum}" />
+								    <c:param name="page" value="${page}" />
+								    <c:if test="${not empty schType}">
+								      <c:param name="schType" value="${schType}" />
+								    </c:if>
+								    <c:if test="${not empty kwd}">
+								      <c:param name="kwd" value="${kwd}" />
+								    </c:if>
+								  </c:url>
+								  <a href="${prevLink}">[${prevDto.category}] ${prevDto.subject}</a>
+								</c:if>
+								</td>
 							</tr>
 						</tbody>
 					</table>

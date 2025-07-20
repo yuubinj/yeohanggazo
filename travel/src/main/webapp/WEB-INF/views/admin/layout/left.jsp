@@ -40,7 +40,7 @@
 		<li class="menu--item menu--item__has_sub_menu">
 			<label class="menu--link" title="고객센터관리">
 				<i class="menu--icon bi bi-question-square"></i>
-				<span class="menu--label">고객센터관리</span>
+				<span class="menu--label">커뮤니티관리</span>
 			</label>
 	
 			<ul class="sub_menu">
@@ -48,13 +48,10 @@
 					<a href="<c:url value='/admin/faq/main' />" class="sub_menu--link">자주하는 질문</a>
 				</li>
 				<li class="sub_menu--item">
-					<a href="<c:url value='/admin/notice/list' />" class="sub_menu--link">공지사항</a>
+					<a href="<c:url value='/bbs/list?categoryNum=1' />" class="sub_menu--link">공지사항</a>
 				</li>
 				<li class="sub_menu--item">
 					<a href="<c:url value='/admin/inquiry/main' />" class="sub_menu--link">문의</a>
-				</li>
-				<li class="sub_menu--item">
-					<a href="<c:url value='/admin' />" class="sub_menu--link">이벤트</a>
 				</li>
 				<li class="sub_menu--item">
 					<a href="#" class="sub_menu--link">신고</a>

@@ -154,8 +154,16 @@ public class BoardController {
 	    HttpSession session = req.getSession();
 	    SessionInfo info = (SessionInfo) session.getAttribute("member");
 
-	    String categoryNum = req.getParameter("categoryNum");
+	    String categoryStr = req.getParameter("categoryNum");
 
+	    // 빈 문자열이나 0이 들어오면 오류 방지하는 로직
+	    int categoryNum = 0;
+	    if (categoryStr != null && !categoryStr.isEmpty()) {
+	        categoryNum = Integer.parseInt(categoryStr); // ← 이게 맞음!
+	    } else {
+	        throw new IllegalArgumentException("카테고리 선택은 필수입니다.");
+	    }
+	    
 	    // 비회원이거나 userLevel이 1 미만이면 접근 차단
 	    if (info == null || info.getUserLevel() < 1) {
 	        return new ModelAndView("redirect:/bbs/list?categoryNum=" + categoryNum);
@@ -172,7 +180,7 @@ public class BoardController {
 			dto.setUserId(info.getUserId());
 		
 			// 파라미터
-			dto.setCategoryNum(Integer.parseInt(categoryNum));
+			dto.setCategoryNum(categoryNum);
 			dto.setSubject(req.getParameter("subject"));
 			dto.setContent(req.getParameter("content"));
 			
@@ -199,13 +207,17 @@ public class BoardController {
 		// 글보기
 		BoardDAO dao = new BoardDAO();
 		MyUtil util = new MyUtil();
-		
-		// 파라미터 수집
-		String categoryNum = req.getParameter("categoryNum");
-		String page = req.getParameter("page");
-		String query = "categoryNum=" + categoryNum + "&page=" + page;
-		
+				
 		try {
+			// 파라미터 수집
+			String listCategoryNum = req.getParameter("listCategoryNum");
+			if (listCategoryNum == null || listCategoryNum.isEmpty()) {
+			    listCategoryNum = "0"; // 기본값 설정 (전체 보기 등)
+			}
+			
+			String page = req.getParameter("page");
+			String query = "categoryNum=" + listCategoryNum  + "&page=" + page;
+			
 			// 글 번호
 			long num = Long.parseLong(req.getParameter("num"));
 			
@@ -237,11 +249,35 @@ public class BoardController {
 				return new ModelAndView("redirect:/bbs/list?" + query);
 			}
 			
-			// 이전글/다음글 (categoryNum 조건에 따라 분기)
-			int nCategory = Integer.parseInt(categoryNum);
-			// 무조건 이 방식으로 통일
+			// 이전글/다음글 (조건에 따라 분기)
+			int nCategory = Integer.parseInt(listCategoryNum);
+					
 			BoardDTO prevDto = dao.findByPrev(nCategory, num, schType, kwd);
 			BoardDTO nextDto = dao.findByNext(nCategory, num, schType, kwd);
+
+			
+			/*
+			boolean isSearch = kwd != null && !kwd.trim().isEmpty();
+			int nCategory = Integer.parseInt(categoryNum);
+			
+			if (nCategory == 0 && !isSearch) {
+			    // 1. 전체 보기 + 검색 없음
+			    prevDto = dao.findByPrevInAll(num);
+			    nextDto = dao.findByNextInAll(num);
+			} else if (nCategory == 0 && isSearch) {
+			    // 2. 전체 보기 + 검색 있음
+			    prevDto = dao.findByPrevInSearch(num, schType, kwd);
+			    nextDto = dao.findByNextInSearch(num, schType, kwd);
+			} else if (nCategory != 0 && !isSearch) {
+			    // 3. 카테고리만 선택, 검색 없음
+			    prevDto = dao.findByPrevInCategory(num, nCategory);
+			    nextDto = dao.findByNextInCategory(num, nCategory);
+			} else {
+			    // 4. 카테고리 + 검색
+			    prevDto = dao.findByPrevInCategorySearch(num, nCategory, schType, kwd);
+			    nextDto = dao.findByNextInCategorySearch(num, nCategory, schType, kwd);
+			}
+			*/
 			
 			// 로그인 유저의 게시글 공감 여부
 	        HttpSession session = req.getSession();
@@ -259,7 +295,12 @@ public class BoardController {
 			// JSP로 전달할 속성
 			ModelAndView mav = new ModelAndView("bbs/article");
 			mav.addObject("categoryNum", nCategory);
+			
+			
 			mav.addObject("dto", dto);
+			
+			mav.addObject("listCategoryNum", listCategoryNum); // 리스트로 돌아가기용
+			mav.addObject("categoryNum", dto.getCategoryNum()); // 진짜 글의 카테고리
 			mav.addObject("page", page);
 			mav.addObject("query", query);
 			mav.addObject("prevDto", prevDto);
@@ -281,7 +322,7 @@ public class BoardController {
 			e.printStackTrace();
 		}
 		// 예외 발생 시 목록으로 이동
-		return new ModelAndView("redirect:/bbs/list?" + query);
+		return new ModelAndView("redirect:/bbs/list?");
 	}
 
 	@RequestMapping(value = "/bbs/update", method = RequestMethod.GET)
@@ -320,7 +361,7 @@ public class BoardController {
 			e.printStackTrace();
 		}
 		
-		return new ModelAndView("redirect:/bbs/list?page=");
+		return new ModelAndView("redirect:/bbs/list?page="+ page);
 	}
 
 	@RequestMapping(value = "/bbs/update", method = RequestMethod.POST)
@@ -337,12 +378,22 @@ public class BoardController {
 		String root = session.getServletContext().getRealPath("/");
 		String pathname = root + "uploads" + File.separator + "bbs";
 		
-		String categoryNum = req.getParameter("categoryNum");
+		String categoryStr = req.getParameter("categoryNum");
+
+	    // 빈 문자열이나 0이 들어오면 오류 방지하는 로직
+	    int categoryNum = 0;
+	    if (categoryStr != null && !categoryStr.isEmpty()) {
+	        categoryNum = Integer.parseInt(categoryStr); // ← 이게 맞음!
+	    } else {
+	        throw new IllegalArgumentException("카테고리 선택은 필수입니다.");
+	    }
+		
 		String page = req.getParameter("page");
 
 		try {
 			BoardDTO dto = new BoardDTO();
 			dto.setNum(Long.parseLong(req.getParameter("num")));
+			dto.setCategoryNum(categoryNum);
 			dto.setSubject(req.getParameter("subject"));
 			dto.setContent(req.getParameter("content"));
 			dto.setSaveFilename(req.getParameter("saveFilename"));
@@ -371,7 +422,7 @@ public class BoardController {
 			e.printStackTrace();
 		}
 		
-		return new ModelAndView("redirect:/bbs/list?categoryNum=" + categoryNum + "&page=" + page);
+		return new ModelAndView("redirect:/bbs/list?categoryNum=0");
 	}
 	
 	@RequestMapping(value = "/bbs/deleteFile")

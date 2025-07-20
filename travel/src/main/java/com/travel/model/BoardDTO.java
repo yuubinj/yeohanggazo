@@ -93,7 +93,7 @@ public class BoardDTO {
 	public void setBoardLikeCount(int boardLikeCount) {
 		this.boardLikeCount = boardLikeCount;
 	}
-	public long getCategoryNum() {
+	public int getCategoryNum() {
 		return categoryNum;
 	}
 	public void setCategoryNum(int categoryNum) {

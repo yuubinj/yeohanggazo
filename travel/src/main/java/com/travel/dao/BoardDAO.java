@@ -47,13 +47,13 @@ public class BoardDAO {
 
     // 게시물 수정
     public void updateBoard(BoardDTO dto) throws SQLException {
-    	PreparedStatement pstmt = null;
-		String sql;
+        PreparedStatement pstmt = null;
+        String sql;
         try {
-        	sql = "UPDATE bbs SET categoryNum=?, subject=?, content=?, saveFilename=?, originalFilename=?, reg_date=SYSDATE WHERE num=? AND userId = ?";
-        	
-        	pstmt = conn.prepareStatement(sql);
-        	
+            sql = "UPDATE bbs SET categoryNum=?, subject=?, content=?, saveFilename=?, originalFilename=?, reg_date=SYSDATE WHERE num=? AND userId = ?";
+            
+            pstmt = conn.prepareStatement(sql);
+            
             pstmt.setLong(1, dto.getCategoryNum());
             pstmt.setString(2, dto.getSubject());
             pstmt.setString(3, dto.getContent());
@@ -63,13 +63,12 @@ public class BoardDAO {
             pstmt.setString(7, dto.getUserId());
             
             pstmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			DBUtil.close(pstmt);
-		}
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DBUtil.close(pstmt);
+        }
     }
 
     // 게시물 삭제
@@ -393,7 +392,6 @@ public class BoardDAO {
     	return list;
     }
 
-
     // 데이터 개수
     public int dataCount() {
     	int result = 0;
@@ -591,188 +589,247 @@ public class BoardDAO {
 
 		return dto;
     }
+    
+    // 정렬 및 검색 기준 통일: 전체조건 + 공지 우선 정렬 + 카테고리, 검색조건 처리
+ 	 // 다음글
+     public BoardDTO findByNext(int categoryNum, long num, String schType, String kwd) {
+         BoardDTO dto = null;
+         PreparedStatement pstmt = null;
+         ResultSet rs = null;
+         StringBuilder sb = new StringBuilder();
 
-	 // 정렬 및 검색 기준 통일: 전체조건 + 공지 우선 정렬 + 카테고리, 검색조건 처리
-	 // 다음글
-    public BoardDTO findByNext(int categoryNum, long num, String schType, String kwd) {
+         try {
+             sb.append("SELECT num, category, subject, content FROM ( ");
+             sb.append("    SELECT b.num, c.category, b.subject, b.content, ");
+             sb.append("           ROW_NUMBER() OVER ( ");
+             sb.append("               ORDER BY ");
+             sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
+             sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+             sb.append("                   b.num DESC ");
+             sb.append("           ) AS rn ");
+             sb.append("    FROM bbs b ");
+             sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+             sb.append("    JOIN member1 m ON b.userId = m.userId ");
+             sb.append("    WHERE b.block = 0 ");
+
+             if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
+             if (kwd != null && !kwd.isEmpty()) {
+                 if ("all".equals(schType)) {
+                     sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                 } else if ("reg_date".equals(schType)) {
+                     kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+                     sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                 } else {
+                     sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
+                 }
+             }
+
+             sb.append(") ");
+             sb.append("WHERE rn = ( ");
+             sb.append("    SELECT rn - 1 FROM ( ");
+             sb.append("        SELECT b.num, ");
+             sb.append("               ROW_NUMBER() OVER ( ");
+             sb.append("                   ORDER BY ");
+             sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
+             sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+             sb.append("                       b.num DESC ");
+             sb.append("               ) AS rn ");
+             sb.append("        FROM bbs b ");
+             sb.append("        WHERE b.block = 0 ");
+
+             if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
+             if (kwd != null && !kwd.isEmpty()) {
+                 if ("all".equals(schType)) {
+                     sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                 } else if ("reg_date".equals(schType)) {
+                     sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                 } else {
+                     sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
+                 }
+             }
+
+             sb.append("    ) WHERE num = ? ");
+             sb.append(")");
+
+             pstmt = conn.prepareStatement(sb.toString());
+             int idx = 1;
+
+             if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
+             if (kwd != null && !kwd.isEmpty()) {
+                 pstmt.setString(idx++, kwd);
+                 if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+             }
+
+             if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
+             if (kwd != null && !kwd.isEmpty()) {
+                 pstmt.setString(idx++, kwd);
+                 if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+             }
+
+             pstmt.setLong(idx++, num);
+
+             rs = pstmt.executeQuery();
+             if (rs.next()) {
+                 dto = new BoardDTO();
+                 dto.setNum(rs.getLong("num"));
+                 dto.setCategory(rs.getString("category"));
+                 dto.setSubject(rs.getString("subject"));
+                 dto.setContent(rs.getString("content"));
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         } finally {
+             DBUtil.close(rs);
+             DBUtil.close(pstmt);
+         }
+
+         return dto;
+     }	
+ 	
+ 	 // 이전글
+     public BoardDTO findByPrev(int categoryNum, long num, String schType, String kwd) {
+         BoardDTO dto = null;
+         PreparedStatement pstmt = null;
+         ResultSet rs = null;
+         StringBuilder sb = new StringBuilder();
+
+         try {
+             sb.append("SELECT num, category, subject, content FROM ( ");
+             sb.append("    SELECT b.num, c.category, b.subject, b.content, ");
+             sb.append("           ROW_NUMBER() OVER ( ");
+             sb.append("               ORDER BY ");
+             sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
+             sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+             sb.append("                   b.num DESC ");
+             sb.append("           ) AS rn ");
+             sb.append("    FROM bbs b ");
+             sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+             sb.append("    JOIN member1 m ON b.userId = m.userId ");
+             sb.append("    WHERE b.block = 0 ");
+
+             if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
+             if (kwd != null && !kwd.isEmpty()) {
+                 if ("all".equals(schType)) {
+                     sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                 } else if ("reg_date".equals(schType)) {
+                     kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+                     sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                 } else {
+                     sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
+                 }
+             }
+
+             sb.append(") ");
+             sb.append("WHERE rn = ( ");
+             sb.append("    SELECT rn + 1 FROM ( ");
+             sb.append("        SELECT b.num, ");
+             sb.append("               ROW_NUMBER() OVER ( ");
+             sb.append("                   ORDER BY ");
+             sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
+             sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+             sb.append("                       b.num DESC ");
+             sb.append("               ) AS rn ");
+             sb.append("        FROM bbs b ");
+             sb.append("        WHERE b.block = 0 ");
+
+             if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
+             if (kwd != null && !kwd.isEmpty()) {
+                 if ("all".equals(schType)) {
+                     sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                 } else if ("reg_date".equals(schType)) {
+                     sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                 } else {
+                     sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
+                 }
+             }
+
+             sb.append("    ) WHERE num = ? ");
+             sb.append(")");
+
+             pstmt = conn.prepareStatement(sb.toString());
+             int idx = 1;
+
+             if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
+             if (kwd != null && !kwd.isEmpty()) {
+                 pstmt.setString(idx++, kwd);
+                 if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+             }
+
+             if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
+             if (kwd != null && !kwd.isEmpty()) {
+                 pstmt.setString(idx++, kwd);
+                 if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+             }
+
+             pstmt.setLong(idx++, num);
+
+             rs = pstmt.executeQuery();
+             if (rs.next()) {
+                 dto = new BoardDTO();
+                 dto.setNum(rs.getLong("num"));
+                 dto.setCategory(rs.getString("category"));
+                 dto.setSubject(rs.getString("subject"));
+                 dto.setContent(rs.getString("content"));
+             }
+         } catch (SQLException e) {
+             e.printStackTrace();
+         } finally {
+             DBUtil.close(rs);
+             DBUtil.close(pstmt);
+         }
+
+         return dto;
+     }
+
+    
+/*
+	// 이전글 전체에서
+    public BoardDTO findByPrevInAll(long num) {
         BoardDTO dto = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         StringBuilder sb = new StringBuilder();
 
         try {
-            sb.append("SELECT num, category, subject, content FROM ( ");
-            sb.append("    SELECT b.num, c.category, b.subject, b.content, ");
+            sb.append("SELECT num, categoryNum, subject FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, b.subject, ");
             sb.append("           ROW_NUMBER() OVER ( ");
             sb.append("               ORDER BY ");
-            sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
-            sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                   b.reg_date DESC, ");
             sb.append("                   b.num DESC ");
             sb.append("           ) AS rn ");
             sb.append("    FROM bbs b ");
-            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
-            sb.append("    JOIN member1 m ON b.userId = m.userId ");
             sb.append("    WHERE b.block = 0 ");
-
-            if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
-            if (kwd != null && !kwd.isEmpty()) {
-                if ("all".equals(schType)) {
-                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
-                } else if ("reg_date".equals(schType)) {
-                    kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
-                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
-                } else {
-                    sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
-                }
-            }
-
             sb.append(") ");
-            sb.append("WHERE rn = ( ");
-            sb.append("    SELECT rn - 1 FROM ( ");
+            sb.append("WHERE rn > ( ");
+            sb.append("    SELECT rn FROM ( ");
             sb.append("        SELECT b.num, ");
             sb.append("               ROW_NUMBER() OVER ( ");
             sb.append("                   ORDER BY ");
-            sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
-            sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                       b.reg_date DESC, ");
             sb.append("                       b.num DESC ");
             sb.append("               ) AS rn ");
             sb.append("        FROM bbs b ");
-            sb.append("        WHERE b.block = 0 ");
-
-            if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
-            if (kwd != null && !kwd.isEmpty()) {
-                if ("all".equals(schType)) {
-                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
-                } else if ("reg_date".equals(schType)) {
-                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
-                } else {
-                    sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
-                }
-            }
-
-            sb.append("    ) WHERE num = ? ");
-            sb.append(")");
+            sb.append("        WHERE b.block = 0 AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ");
+            sb.append("ORDER BY rn ASC FETCH FIRST 1 ROWS ONLY ");
 
             pstmt = conn.prepareStatement(sb.toString());
-            int idx = 1;
-
-            if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
-            if (kwd != null && !kwd.isEmpty()) {
-                pstmt.setString(idx++, kwd);
-                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
-            }
-
-            if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
-            if (kwd != null && !kwd.isEmpty()) {
-                pstmt.setString(idx++, kwd);
-                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
-            }
-
-            pstmt.setLong(idx++, num);
+            pstmt.setLong(1, num);
 
             rs = pstmt.executeQuery();
             if (rs.next()) {
                 dto = new BoardDTO();
                 dto.setNum(rs.getLong("num"));
-                dto.setCategory(rs.getString("category"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
                 dto.setSubject(rs.getString("subject"));
-                dto.setContent(rs.getString("content"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            DBUtil.close(rs);
-            DBUtil.close(pstmt);
-        }
-
-        return dto;
-    }	
-	
-	 // 이전글
-    public BoardDTO findByPrev(int categoryNum, long num, String schType, String kwd) {
-        BoardDTO dto = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-        StringBuilder sb = new StringBuilder();
-
-        try {
-            sb.append("SELECT num, category, subject, content FROM ( ");
-            sb.append("    SELECT b.num, c.category, b.subject, b.content, ");
-            sb.append("           ROW_NUMBER() OVER ( ");
-            sb.append("               ORDER BY ");
-            sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
-            sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
-            sb.append("                   b.num DESC ");
-            sb.append("           ) AS rn ");
-            sb.append("    FROM bbs b ");
-            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
-            sb.append("    JOIN member1 m ON b.userId = m.userId ");
-            sb.append("    WHERE b.block = 0 ");
-
-            if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
-            if (kwd != null && !kwd.isEmpty()) {
-                if ("all".equals(schType)) {
-                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
-                } else if ("reg_date".equals(schType)) {
-                    kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
-                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
-                } else {
-                    sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
-                }
             }
 
-            sb.append(") ");
-            sb.append("WHERE rn = ( ");
-            sb.append("    SELECT rn + 1 FROM ( ");
-            sb.append("        SELECT b.num, ");
-            sb.append("               ROW_NUMBER() OVER ( ");
-            sb.append("                   ORDER BY ");
-            sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END ASC, ");
-            sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date ELSE NULL END DESC, ");
-            sb.append("                       b.num DESC ");
-            sb.append("               ) AS rn ");
-            sb.append("        FROM bbs b ");
-            sb.append("        WHERE b.block = 0 ");
-
-            if (categoryNum > 0) sb.append(" AND b.categoryNum = ? ");
-            if (kwd != null && !kwd.isEmpty()) {
-                if ("all".equals(schType)) {
-                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
-                } else if ("reg_date".equals(schType)) {
-                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
-                } else {
-                    sb.append(" AND INSTR(" + schType + ", ?) >= 1 ");
-                }
-            }
-
-            sb.append("    ) WHERE num = ? ");
-            sb.append(")");
-
-            pstmt = conn.prepareStatement(sb.toString());
-            int idx = 1;
-
-            if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
-            if (kwd != null && !kwd.isEmpty()) {
-                pstmt.setString(idx++, kwd);
-                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
-            }
-
-            if (categoryNum > 0) pstmt.setInt(idx++, categoryNum);
-            if (kwd != null && !kwd.isEmpty()) {
-                pstmt.setString(idx++, kwd);
-                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
-            }
-
-            pstmt.setLong(idx++, num);
-
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                dto = new BoardDTO();
-                dto.setNum(rs.getLong("num"));
-                dto.setCategory(rs.getString("category"));
-                dto.setSubject(rs.getString("subject"));
-                dto.setContent(rs.getString("content"));
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -782,7 +839,510 @@ public class BoardDAO {
 
         return dto;
     }
+    
+    // 다음글 전체에서
+    public BoardDTO findByNextInAll(long num) {
+        BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
 
+        try {
+            sb.append("SELECT num, categoryNum, subject FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, b.subject, ");
+            sb.append("           ROW_NUMBER() OVER ( ");
+            sb.append("               ORDER BY ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                   b.reg_date DESC, ");
+            sb.append("                   b.num DESC ");
+            sb.append("           ) AS rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    WHERE b.block = 0 ");
+            sb.append(") ");
+            sb.append("WHERE rn < ( ");
+            sb.append("    SELECT rn FROM ( ");
+            sb.append("        SELECT b.num, ");
+            sb.append("               ROW_NUMBER() OVER ( ");
+            sb.append("                   ORDER BY ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                       b.reg_date DESC, ");
+            sb.append("                       b.num DESC ");
+            sb.append("               ) AS rn ");
+            sb.append("        FROM bbs b ");
+            sb.append("        WHERE b.block = 0 AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ");
+            sb.append("ORDER BY rn DESC FETCH FIRST 1 ROWS ONLY ");
+
+            pstmt = conn.prepareStatement(sb.toString());
+            pstmt.setLong(1, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setSubject(rs.getString("subject"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+        return dto;
+    }
+    
+    // 카테고리 기준 이전글
+    public BoardDTO findByPrevInCategory(long num, int categoryNum) {
+        BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT * FROM (");
+            sb.append("  SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("         ROW_NUMBER() OVER (");
+            sb.append("             ORDER BY ");
+            sb.append("                 CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                 CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                 b.num DESC ");
+            sb.append("         ) rn ");
+            sb.append("  FROM bbs b ");
+            sb.append("  JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("  WHERE b.block = 0 AND b.categoryNum = ? ");
+            sb.append(") ");
+            sb.append("WHERE rn > ( ");
+            sb.append("  SELECT rn FROM (");
+            sb.append("    SELECT b.num, ROW_NUMBER() OVER (");
+            sb.append("        ORDER BY ");
+            sb.append("            CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("            CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("            b.num DESC ");
+            sb.append("    ) rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    WHERE b.block = 0 AND b.categoryNum = ? AND b.num = ? ");
+            sb.append("  )");
+            sb.append(") ORDER BY rn ASC FETCH FIRST 1 ROWS ONLY");
+
+            pstmt = conn.prepareStatement(sb.toString());
+            pstmt.setInt(1, categoryNum);
+            pstmt.setInt(2, categoryNum);
+            pstmt.setLong(3, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+        return dto;
+    }
+
+    // 카테고리 기준 다음글
+    public BoardDTO findByNextInCategory(long num, int categoryNum) {
+        BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT * FROM (");
+            sb.append("  SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("         ROW_NUMBER() OVER (");
+            sb.append("             ORDER BY ");
+            sb.append("                 CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                 CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                 b.num DESC ");
+            sb.append("         ) rn ");
+            sb.append("  FROM bbs b ");
+            sb.append("  JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("  WHERE b.block = 0 AND b.categoryNum = ? ");
+            sb.append(") ");
+            sb.append("WHERE rn < ( ");
+            sb.append("  SELECT rn FROM (");
+            sb.append("    SELECT b.num, ROW_NUMBER() OVER (");
+            sb.append("        ORDER BY ");
+            sb.append("            CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("            CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("            b.num DESC ");
+            sb.append("    ) rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    WHERE b.block = 0 AND b.categoryNum = ? AND b.num = ? ");
+            sb.append("  )");
+            sb.append(") ORDER BY rn DESC FETCH FIRST 1 ROWS ONLY");
+
+            pstmt = conn.prepareStatement(sb.toString());
+            pstmt.setInt(1, categoryNum);
+            pstmt.setInt(2, categoryNum);
+            pstmt.setLong(3, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+        return dto;
+    }
+
+    
+    // 이전글 검색에서
+    public BoardDTO findByPrevInSearch(long num, String schType, String kwd) {
+    	BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT num, categoryNum, category, subject, content FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("           ROW_NUMBER() OVER ( ");
+            sb.append("               ORDER BY ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                   CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                   b.num DESC ");
+            sb.append("           ) AS rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("    WHERE b.block = 0 ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    kwd = kwd.replaceAll("(\\-|\\/|\\.)", "");
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(") WHERE rn > ( ");
+            sb.append("    SELECT rn FROM ( ");
+            sb.append("        SELECT b.num, ");
+            sb.append("               ROW_NUMBER() OVER ( ");
+            sb.append("                   ORDER BY ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN 0 ELSE 1 END, ");
+            sb.append("                       CASE WHEN b.categoryNum = 1 THEN b.reg_date END DESC, ");
+            sb.append("                       b.num DESC ");
+            sb.append("               ) AS rn ");
+            sb.append("        FROM bbs b ");
+            sb.append("        WHERE b.block = 0 ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(" AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ORDER BY rn ASC FETCH FIRST 1 ROWS ONLY ");
+
+            pstmt = conn.prepareStatement(sb.toString());
+
+            int idx = 1;
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setLong(idx, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+        return dto;
+    }
+    
+    // 다음글 검색에서
+    public BoardDTO findByNextInSearch(long num, String schType, String kwd) throws SQLException {
+    	BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT num, categoryNum, category, subject, content FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("           ROW_NUMBER() OVER ( ");
+            sb.append("               ORDER BY b.reg_date DESC, b.num DESC ");
+            sb.append("           ) AS rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("    WHERE b.block = 0 ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(") WHERE rn < ( ");
+            sb.append("    SELECT rn FROM ( ");
+            sb.append("        SELECT b.num, ROW_NUMBER() OVER (ORDER BY b.reg_date DESC, b.num DESC) AS rn ");
+            sb.append("        FROM bbs b ");
+            sb.append("        WHERE b.block = 0 ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(" AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ORDER BY rn DESC FETCH FIRST 1 ROWS ONLY ");
+
+            pstmt = conn.prepareStatement(sb.toString());
+
+            int idx = 1;
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setLong(idx, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+        return dto;
+    }
+    
+    // 이전글 카테고리+검색에서
+    public BoardDTO findByPrevInCategorySearch(long num, int categoryNum, String schType, String kwd) {
+        BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT num, categoryNum, category, subject, content FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("           ROW_NUMBER() OVER (ORDER BY b.reg_date DESC, b.num DESC) AS rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("    WHERE b.block = 0 AND b.categoryNum = ? ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(") WHERE rn > ( ");
+            sb.append("    SELECT rn FROM ( ");
+            sb.append("        SELECT b.num, ROW_NUMBER() OVER (ORDER BY b.reg_date DESC, b.num DESC) AS rn ");
+            sb.append("        FROM bbs b ");
+            sb.append("        WHERE b.block = 0 AND b.categoryNum = ? ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(" AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ORDER BY rn ASC FETCH FIRST 1 ROWS ONLY ");
+
+            pstmt = conn.prepareStatement(sb.toString());
+
+            int idx = 1;
+            pstmt.setInt(idx++, categoryNum);
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setInt(idx++, categoryNum);
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setLong(idx, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+        return dto;
+    }
+    
+    // 다음글 카테고리+검색에서
+    public BoardDTO findByNextInCategorySearch(long num, int categoryNum, String schType, String kwd) {
+        BoardDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("SELECT num, categoryNum, category, subject, content FROM ( ");
+            sb.append("    SELECT b.num, b.categoryNum, c.category, b.subject, b.content, ");
+            sb.append("           ROW_NUMBER() OVER (ORDER BY b.reg_date DESC, b.num DESC) AS rn ");
+            sb.append("    FROM bbs b ");
+            sb.append("    JOIN bbsCategory c ON b.categoryNum = c.categoryNum ");
+            sb.append("    WHERE b.block = 0 AND b.categoryNum = ? ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(") WHERE rn < ( ");
+            sb.append("    SELECT rn FROM ( ");
+            sb.append("        SELECT b.num, ROW_NUMBER() OVER (ORDER BY b.reg_date DESC, b.num DESC) AS rn ");
+            sb.append("        FROM bbs b ");
+            sb.append("        WHERE b.block = 0 AND b.categoryNum = ? ");
+
+            if (kwd != null && !kwd.isEmpty()) {
+                if ("all".equals(schType)) {
+                    sb.append(" AND (INSTR(b.subject, ?) >= 1 OR INSTR(b.content, ?) >= 1) ");
+                } else if ("reg_date".equals(schType)) {
+                    sb.append(" AND TO_CHAR(b.reg_date, 'YYYYMMDD') = ? ");
+                } else {
+                    sb.append(" AND INSTR(").append(schType).append(", ?) >= 1 ");
+                }
+            }
+
+            sb.append(" AND b.num = ? ");
+            sb.append("    ) ");
+            sb.append(") ORDER BY rn DESC FETCH FIRST 1 ROWS ONLY ");
+
+            pstmt = conn.prepareStatement(sb.toString());
+
+            int idx = 1;
+            pstmt.setInt(idx++, categoryNum);
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setInt(idx++, categoryNum);
+            if (kwd != null && !kwd.isEmpty()) {
+                pstmt.setString(idx++, kwd);
+                if ("all".equals(schType)) pstmt.setString(idx++, kwd);
+            }
+            pstmt.setLong(idx, num);
+
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                dto = new BoardDTO();
+                dto.setNum(rs.getLong("num"));
+                dto.setCategoryNum(rs.getInt("categoryNum"));
+                dto.setCategory(rs.getString("category"));
+                dto.setSubject(rs.getString("subject"));
+                dto.setContent(rs.getString("content"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+
+        return dto;
+    }
+*/
+    
     // 조회수 증가하기
     public void updateHitCount(long num) throws SQLException {
     	PreparedStatement pstmt = null;

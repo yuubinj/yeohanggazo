@@ -19,7 +19,7 @@
 	<div class="container">
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
-				<h3><i class="bi bi-book-half"></i> 게시글 작성</h3>
+				<h3><i class="bi bi-book-half"></i> ${mode=='update'?'게시물 수정':'게시물 작성'}</h3>
 
 				<form name="postForm" method="post" enctype="multipart/form-data">
 					<table class="table mt-4 write-form">
@@ -29,14 +29,14 @@
 						        <select name="categoryNum" class="form-select w-auto d-inline">
 									<c:choose>
 										<c:when test="${sessionScope.member.userLevel == 99}">
-											<option value=""> 선택 </option>
+											<option value="" disabled selected> 선택 </option>
 											<option value="1" ${categoryNum == 1 ? "selected" : ""}>공지</option>
 											<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
 											<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
 											<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
 										</c:when>
 										<c:otherwise>
-											<option value=""> 선택 </option>
+											<option value="" disabled selected> 선택 </option>
 											<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
 											<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
 											<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
@@ -65,8 +65,11 @@
 								<td class="bg-light" scope="row">첨부된파일</td>
 								<td>
 									<c:if test="${not empty dto.saveFilename}">
-										<a href="javascript:deleteFile('${dto.num}');"><i class="bi bi-trash"></i></a>
-										${dto.originalFilename}
+										<!-- 삭제 버튼 클릭 시 파일 영역 숨기고 deleteFlag 설정 -->
+										<div id="attachedFileArea">
+											<a href="javascript:markFileForDelete();"><i class="bi bi-trash"></i></a>
+											${dto.originalFilename}
+										</div>
 									</c:if>
 								</td>
 							</tr>
@@ -77,12 +80,17 @@
 						<button type="button" class="btn btn-dark" onclick="submitContents(this.form);">${mode=='update'?'수정완료':'등록완료'} <i class="bi bi-check2"></i></button>
 						<button type="reset" class="btn btn-light">다시입력</button>
 						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/bbs/list?category=${category}';">${mode=='update'?'수정취소':'등록취소'} <i class="bi bi-x"></i></button>
+						
+						<!-- 수정모드일 경우 hidden 값들 세팅 -->
 						<c:if test="${mode=='update'}">
 							<input type="hidden" name="num" value="${dto.num}">
 							<input type="hidden" name="page" value="${page}">
 							<input type="hidden" name="saveFilename" value="${dto.saveFilename}">
 							<input type="hidden" name="originalFilename" value="${dto.originalFilename}">
 						</c:if>
+						
+						<!-- 삭제 여부 전달용 히든필드 (항상 포함) -->
+						<input type="hidden" name="deleteFlag" id="deleteFlag" value="false">
 					</div>
 				</form>
 
@@ -123,12 +131,17 @@ function check() {
 	return true;
 }
 
-<c:if test="${mode=='update'}">
-function deleteFile(num) {
+// 기존 파일 삭제 의도만 표시 (실제 삭제는 Controller에서 수행)
+function markFileForDelete() {
 	if (!confirm("파일을 삭제하시겠습니까?")) return;
-	location.href = '${pageContext.request.contextPath}/bbs/deleteFile?num=' + num + '&category=${category}&page=${page}';
+
+	// 화면에서 파일 숨김
+	const fileArea = document.getElementById("attachedFileArea");
+	if (fileArea) fileArea.style.display = "none";
+
+	// 삭제 의사 표시
+	document.getElementById("deleteFlag").value = "true";
 }
-</c:if>
 </script>
 
 
