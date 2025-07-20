@@ -24,12 +24,18 @@
 					    </c:when>
 					    <c:when test="${not empty sessionScope.member and sessionScope.member.userLevel == 99}">
 					        <div class="deleteReplyAnswer reply-menu-item" data-replyNum="${vo.replyNum}" data-parentNum="${vo.parentNum}">삭제</div>
-					        <div class="blockReplyAnswer reply-menu-item">차단</div>
+					         <div class="blockReplyAnswer reply-menu-item" data-block="${vo.block}" data-block="${vo.block}">${vo.block == 0 ? "해제":"차단"}</div>
 					    </c:when>
-					    <c:otherwise>
-					        <div class="notifyReplyAnswer reply-menu-item">신고</div>
-					        <div class="blockReplyAnswer reply-menu-item">차단</div>
-					    </c:otherwise>
+					    <c:when test="${not empty sessionScope.member}">
+					        <!-- 본인이 아니고, 관리자가 아닐 경우 -->
+					        <c:if test="${sessionScope.member.userId != vo.userId}">
+					            <div class="notifyReplyAnswer reply-menu-item">신고</div>
+					        </c:if>
+					    </c:when>
+					    <c:when test="${empty sessionScope.member}">
+					        <div class="reply-menu-item" onclick="if(confirm('이 기능은 로그인 후 이용 가능합니다.\n로그인하시겠습니까?')) location.href='${pageContext.request.contextPath}/member/login';">신고</div>
+        					<div class="reply-menu-item" onclick="if(confirm('이 기능은 로그인 후 이용 가능합니다.\n로그인하시겠습니까?')) location.href='${pageContext.request.contextPath}/member/login';">차단</div>
+					    </c:when>
 					</c:choose>
 				</div>
 			</div>

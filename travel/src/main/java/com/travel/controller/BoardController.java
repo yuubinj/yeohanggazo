@@ -778,12 +778,12 @@ public class BoardController {
 	    String userId = null;
 	    int userLevel = 0;
 
-	    if (info != null) {
-	        userId = info.getUserId();
-	        userLevel = info.getUserLevel();
-	    }
-
 	    try {
+	    	if (info != null) {
+	    		userId = info.getUserId();
+	    		userLevel = info.getUserLevel();
+	    	} 
+	    	
 	        long parentNum = Long.parseLong(req.getParameter("parentNum"));
 
 	        List<BbsReplyDTO> listReplyAnswer = dao.listReplyAnswer(parentNum, userId, userLevel);
@@ -794,6 +794,8 @@ public class BoardController {
 
 	        ModelAndView mav = new ModelAndView("bbs/listReplyAnswer");
 	        mav.addObject("listReplyAnswer", listReplyAnswer);
+	        mav.addObject("userId", userId);
+	        mav.addObject("userLevel", userLevel);
 
 	        return mav;
 
@@ -826,7 +828,7 @@ public class BoardController {
 		
 		try {
 			long parentNum = Long.parseLong(req.getParameter("parentNum"));
-			count = dao.dataCountReplyAnswer(parentNum, info.getUserId(), info.getUserLevel());
+			count = dao.dataCountReplyAnswer(parentNum, userId, userLevel);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

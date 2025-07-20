@@ -41,6 +41,15 @@
 .text-muted {
 	color: #888 !important;
 }
+
+/* 기본디자인 */
+.body-title {
+	border-bottom: none !important;
+}
+.border-line {
+	width: 1200px;
+	border-bottom: 1px solid #ddd;
+}
 </style>
 </head>
 <body>
@@ -51,9 +60,10 @@
 	<jsp:include page="/WEB-INF/views/admin/layout/left.jsp"/>
 	<div class="wrapper">
 		<div class="body-container">
-		
-		    <div class="body-title">
-				<h3><i class="bi bi-question-octagon"></i> 자주하는 질문 </h3>
+		    <div class="body-title border-line">
+			    <div class="border-line">
+					<h3><i class="bi bi-question-octagon"></i> 자주하는 질문 </h3>
+				</div>
 		    </div>
 		    
 		    <div class="body-main row">

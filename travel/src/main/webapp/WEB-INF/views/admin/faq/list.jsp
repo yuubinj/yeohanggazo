@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 					
 					<span class="text-primary fw-bold me-1">Q.</span>
 					<span>${dto.subject}</span>
-					<span class="position-absolute text-muted small" style="left: 90%; white-space: nowrap;">
+					<span class="position-absolute text-muted small" style="left: 88%; white-space: nowrap;">
 						| ${dto.category}
 					</span>
 				</button>

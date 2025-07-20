@@ -9,6 +9,78 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
+
+<style type="text/css">
+/* 배경색 전체 적용 */
+body {
+    background-color: #f8f9fc;
+}
+
+/* 둥글고 그림자 있는 카드 스타일 */
+.rounded-box {
+    background-color: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e2e2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 28px;
+    margin-bottom: 24px;
+}
+
+/* 테이블 형식 통일화 */
+.table.read-form {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: none;
+    width: 100%;
+}
+
+/* 각 셀 스타일 */
+.table.read-form td {
+    padding: 14px 12px;
+    vertical-align: middle;
+    font-size: 16px;
+    color: #333;
+    border-top: 1px solid #eee;
+}
+
+/* 첫 번째 줄 상단 라인은 제외 */
+.table.read-form tr:first-child td {
+    border-top: none;
+}
+
+/* 제목, 작성자 라벨 셀 */
+.table.read-form td:first-child {
+    width: 100px;
+    font-weight: 500;
+    color: #555;
+}
+
+/* 카테고리 배지 */
+.category-badge {
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-right: 8px;
+    background-color: #e0e7ff;
+    color: #2f3f73;
+}
+
+/* 버튼 스타일 */
+.btn {
+    padding: 8px 18px;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 로그인 - 남의 댓글/답글 칸 설정 */
+.reply .reply-menu {
+    min-height: auto !important;
+    height: auto !important;
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -20,18 +92,28 @@
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
 				<div class="body-title">
-					<h3><i class="bi bi-book-half"></i> 
+					<h3>
 						<c:choose>
-							<c:when test="${categoryNum == 1}">공지</c:when>
-						  	<c:when test="${categoryNum == 2}">현지인 추천</c:when>
-						  	<c:when test="${categoryNum == 3}">리뷰</c:when>
-						  	<c:when test="${categoryNum == 4}">기타</c:when>
-						  	<c:otherwise>전체</c:otherwise>
+							  <c:when test="${categoryNum == 1}">
+							    <i class="bi bi-megaphone-fill text-danger me-1"></i> 공지
+							  </c:when>
+							  <c:when test="${categoryNum == 2}">
+							    <i class="bi bi-hand-thumbs-up-fill text-success me-1"></i> 현지인 추천
+							  </c:when>
+							  <c:when test="${categoryNum == 3}">
+							    <i class="bi bi-chat-left-text-fill text-primary me-1"></i> 리뷰
+							  </c:when>
+							  <c:when test="${categoryNum == 4}">
+							    <i class="bi bi-three-dots text-muted me-1"></i> 기타
+							  </c:when>
+							  <c:otherwise>
+							    <i class="bi bi-globe text-secondary me-1"></i> 전체
+							  </c:otherwise>
 						</c:choose> 게시글
 					</h3>
 				</div>
 				
-				<div class="body-main">
+				<div class="body-main rounded-box">
 
 					<table class="table board-article">
 						<thead>

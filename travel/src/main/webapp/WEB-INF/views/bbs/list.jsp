@@ -11,34 +11,178 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 
 <style type="text/css">
-.category-badge {
-    display: inline-block;
-    min-width: 90px;
-    text-align: left;
-    padding: 2px 6px;
-    font-size: 0.85em;
-    border-radius: 4px;
-    font-weight: 500;
-    white-space: nowrap;
+/* 전체 배경 */
+body {
+    background-color: #f8f9fc;
 }
 
-/* 카테고리별 배경색 */
-.category-1 { 
-    background-color: #ffe6e9;  /* 연한 분홍 배경 */
-    color: #ff6b81;             /* 밝은 빨강 텍스트 */
-    border: 1px solid #ff6b81;  /* 테두리도 동일 색상 */
-    font-weight: 600;
+/* 리스트 전체 박스 카드화 */
+.board-list-wrapper {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* 제목 스타일 */
+.section-title {
+    position: relative;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 24px;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 200px;
+    height: 3px;
+    background-color: #ccc;
     border-radius: 6px;
-}    
-.category-2 { 
-	background-color: #198754; color: white;	/* 현지인 추천 - 초록 */
-	}     /* 현지인 추천 - 초록 */
-.category-3 { 
-	background-color: #0d6efd; color: white;	/* 리뷰 - 파랑 */
-	}     
-.category-4 { 
-	background-color: #6c757d; color: white;	/* 기타 - 회색 */
-	}     
+}
+
+/* 부트스트랩 기본 선 제거 */
+.body-title h3 {
+	border-bottom: none !important;
+}
+/* 부트스트랩 기본 그림자 제거 */
+/* 테이블 상단 검은 테두리 제거 및 부드러운 구분선 유지 */
+.table.board-list {
+    border: none !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    box-shadow: none !important;
+}
+.table.board-list thead th {
+    border-top: none !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    box-shadow: none !important;
+}
+
+/* 테이블 헤더와 셀 테두리 제거 + 연한선*/
+.table.board-list th,
+.table.board-list td {
+    border-width: 1px 0; /* 위아래만 선, 좌우는 없음 */
+    border-style: solid;
+    border-color: #dee2e6;
+}
+/* thead 하단 구분선도 제거 + 연한선*/
+.table.board-list thead {
+     border-bottom: 1px solid #dee2e6;
+}
+/* 테이블 외곽선 구분선도 제거*/
+.table.board-list {
+    border-collapse: collapse;
+    border: none !important;
+}
+
+
+/* 카테고리 배지 */
+.category-badge {
+    display: inline-block;
+    border-radius: 6px; /* 살짝만 둥글게 */
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 500;
+    width: 100px;
+    text-align: center;
+    white-space: nowrap;       /* 줄바꿈 막기 */
+}
+
+/* 카테고리별 색상 */
+.category-1 {
+    background-color: #ffe6e9;
+    color: #ff6b81;
+    border: 1px solid #ff6b81;
+}
+
+.category-2 {
+    background-color: #d1f4e0;
+    color: #198754;
+    border: 1px solid #198754;
+}
+
+.category-3 {
+    background-color: #d6e8ff;
+    color: #0d6efd;
+    border: 1px solid #0d6efd;
+}
+
+.category-4 {
+    background-color: #eeeeee;
+    color: #6c757d;
+    border: 1px solid #6c757d;
+}
+
+/* 테이블 전체 스타일 */
+.table.board-list {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    font-size: 14px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+}
+
+
+/* 셀 공통 스타일 */
+.table td, .table th {
+    vertical-align: middle;
+    white-space: nowrap;
+    text-align: center;
+    padding: 12px 10px;
+    border-top: 1px solid #e8e8e8;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+/* 번호 열 정렬 */
+.table td:first-child {
+    text-align: center;
+}
+
+/* 제목 컬럼만 좌측 정렬 */
+.table td.left {
+    text-align: left;
+}
+
+/* 제목 줄이 늘어날 수 있도록 */
+.text-wrap .flex-grow-1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+/* 말머리 + 제목 간격 */
+.text-wrap .category-badge + .flex-grow-1 {
+    margin-left: 10px;
+}
+
+/* 좋아요 / 첨부 아이콘 정렬 */
+.table td:nth-last-child(-n+2) {
+    text-align: center;
+}
+
+/* 검색폼 정돈 */
+form[name='searchForm'] select,
+form[name='searchForm'] input {
+    height: 38px;
+}
+
+/* 글쓰기 버튼 영역 여백 */
+.board-list-footer {
+    margin-top: 20px;
+}
+
+/* 페이징 영역 여백 */
+.page-navigation {
+    margin-top: 20px;
+}
 </style>
 
 </head>
@@ -52,7 +196,7 @@
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
 				<div class="body-title">
-					<h3><i class="bi bi-book-half"></i> 자유게시판 </h3>
+					<h3 class="section-title"><i class="bi bi-stars"></i> 자유게시판 </h3>
 				</div>
 				
 				<!-- 카테고리 선택 드롭다운 -->
@@ -71,11 +215,11 @@
 				    </form>
 				</div>
 				
-				<div class="body-main">
+				<div class="body-main board-list-wrapper">
 					<table class="table table-hover board-list">
 						<thead class="table-light">
 							<tr>
-								<th width="60">번호</th>
+								<th width="60">말머리</th>
 								<th>제목</th>
 								<th width="100">작성자</th>
 								<th width="100">작성일</th>
@@ -112,8 +256,8 @@
 											        <c:param name="kwd" value="${kwd}" />
 											    </c:if>
 											</c:url>
-											<div class="d-flex align-items-center gap-1">
-												<a href="${articleLink}" class="d-flex align-items-center gap-1 text-reset text-decoration-none">
+											<div class="d-flex align-items-center gap-3">
+												<a href="${articleLink}" class="d-flex align-items-center gap-3 text-reset text-decoration-none">
 												    <c:if test="${dto.category != '공지'}">
 												        <span class="category-badge category-${dto.categoryNum}">[${dto.category}]</span>
 												    </c:if>

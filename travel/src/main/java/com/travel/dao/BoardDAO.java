@@ -1644,10 +1644,10 @@ public class BoardDAO {
 		
 		try {
 			sql = "SELECT COUNT(*) FROM bbsReply "
-					+ " WHERE num = ? AND parentNum = 0 AND block = 0 ";
+					+ " WHERE num = ? AND parentNum = 0 ";
 			
 			if(userLevel < 51) {
-				sql += " AND (userId = ? OR showReply = 1) ";
+				sql += " AND block = 0 AND (userId = ? OR showReply = 1) ";
 			}
 			
 			pstmt = conn.prepareStatement(sql);
@@ -1810,10 +1810,9 @@ public class BoardDAO {
 		String sql;
 		
 		try {
-			sql = "SELECT COUNT(*) FROM bbsReply "
-					+ " WHERE parentNum = ? AND block = 0 ";
+			sql = "SELECT COUNT(*) FROM bbsReply WHERE parentNum = ?";
 			if(userLevel < 51) {
-				sql += " AND (userId = ? OR showReply = 1) ";
+				sql += " AND block = 0 AND (userId = ? OR showReply = 1) ";
 			}
 			
 			pstmt = conn.prepareStatement(sql);
@@ -1948,4 +1947,10 @@ public class BoardDAO {
 			DBUtil.close(pstmt);
 		}
 	}
+    
+    
+    
+    // showReply : 1 표시된 상태, 0 숨김상태, block: 0보여짐, 1차단
+    
+    
 } 
