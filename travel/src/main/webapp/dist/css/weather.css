@@ -1,0 +1,78 @@
+@charset "UTF-8";
+
+/* weather */
+.weather-box {
+  display: block;
+  padding: 10px 15px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+}
+
+.weather-header {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+  user-select: none;
+}
+
+.weather-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: flex-start;
+}
+
+.weather-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  width: 160px;
+  padding: 15px 12px;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.weather-city {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #34495e;
+}
+
+.weather-icon {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 10px;
+}
+
+.weather-desc {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+
+.weather-temp {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c3d72;
+  margin-bottom: 8px;
+}
+
+.weather-rain {
+  font-size: 13px;
+  color: #95a5a6;
+}
+
+/* 반응형: 화면이 작아질 때 카드 크기 조정 */
+@media (max-width: 480px) {
+  .weather-card {
+    width: 45vw;
+    padding: 12px 10px;
+  }
+
+  .weather-header {
+    font-size: 18px;
+  }
+}

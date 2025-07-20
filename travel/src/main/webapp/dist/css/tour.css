@@ -1,0 +1,54 @@
+@charset "UTF-8";
+
+
+/* 관광지 검색(input) */
+#tourist-panel #inputKeyword {
+	margin-bottom: 10px;
+}
+
+.input-group .form-control,
+.input-group .btn {
+  height: 40px;
+  padding: 0 12px;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.input-group .form-control {
+  border-radius: 0.375rem 0 0 0.375rem;
+  margin-right: 0;
+}
+
+.input-group .btn {
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+
+
+/* 관광지 상세정보 */
+.tour-detail h3 {
+	font-size: 19px;
+	font-weight: bold;
+}
+
+.tour-detail h4, .detailminititle {
+	font-size: 16px;
+	font-weight: bold;
+	
+	line-height: 1.2;
+	margin-bottom: 4px;
+}
+
+.tour-detail p, .detailminicontent {
+	font-size: 15px;
+	padding-left: 8px;
+}
+
+.tour-detail .detailminititle, .detailminicontent {
+	display: inline-block;
+	vertical-align: top; /* 추가 */
+}
+
+.tour-detail .p-1 {
+	margin-top: 10px;
+}
