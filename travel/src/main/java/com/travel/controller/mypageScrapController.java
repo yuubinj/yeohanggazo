@@ -7,9 +7,7 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.travel.dao.ScrapDAO;
 import com.travel.model.ScrapDTO;
@@ -17,7 +15,6 @@ import com.travel.model.SessionInfo;
 import com.travel.mvc.annotation.Controller;
 import com.travel.mvc.annotation.RequestMapping;
 import com.travel.mvc.annotation.RequestMethod;
-import com.travel.mvc.annotation.ResponseBody;
 import com.travel.mvc.view.ModelAndView;
 
 import jakarta.servlet.ServletException;
@@ -39,7 +36,8 @@ public class mypageScrapController {
 		ModelAndView mav = new ModelAndView("myPage/scrap/list");
 	    
 	    ScrapDAO dao = new ScrapDAO();
-	    
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo)session.getAttribute("member"); 
 	    try {
 	        int size = 9;
 	        String pageNo = req.getParameter("pageNo");
@@ -51,8 +49,13 @@ public class mypageScrapController {
 	        int offset = (current_page - 1) * size;
 	        if(offset < 0) offset = 0;
 	        
-	        List<ScrapDTO> list = dao.mypageListScrap(offset, size);
+	        List<ScrapDTO> list = dao.mypageListScrap(offset, size, info.getUserId());
+	        int total_count = dao.dataCount(info.getUserId());
+	        
+	        mav.addObject("total_count", total_count);
+	        mav.addObject("size", size);
 	        mav.addObject("list", list);
+	        
 	        
 	    } catch (Exception e) {
 	        resp.sendError(406);
@@ -62,39 +65,6 @@ public class mypageScrapController {
 	    return mav;
 	}
 
-	
-	@ResponseBody
-	@RequestMapping(value = "/myPage/scrap/delete", method = RequestMethod.POST)
-	public Map<String, Object> deletescrap(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Map<String, Object> model = new HashMap<String, Object>();
-		
-		ScrapDAO dao = null;
-		String state = "false";
-		
-		HttpSession session = req.getSession();
-		SessionInfo info = (SessionInfo)session.getAttribute("member");
-		
-		try {
-			
-			String userId = (info.getUserId());
-			String apiTypeId = (req.getParameter("apiTypeId"));
-			
-			if (apiTypeId == null || apiTypeId.trim().isEmpty()) {
-		        model.put("state", state);
-		        model.put("message", "삭제할 스크랩 정보가 없습니다.");
-		        return model;
-		    }
-			dao =  new ScrapDAO();
-			dao.mypageDeleteScrap(userId, apiTypeId);
-			
-			state = "true";
-		} catch (Exception e) {
-		}
-		
-		model.put("state", state);
-		
-		return model;
-	}
 	
 	@RequestMapping(value = "/myPage/scrap/details", method = RequestMethod.GET)
 	public void apiScrapDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -145,5 +115,4 @@ public class mypageScrapController {
 	        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "API 호출 실패");
 	    }
 	}
-	
 }
