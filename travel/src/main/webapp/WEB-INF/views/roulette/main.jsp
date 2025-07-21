@@ -81,7 +81,7 @@ canvas {
 						</h3>
 					</div>
 
-					<div class="body-main">
+					<div class="body-main" style="display:flex; justify-content: center;">
 						<div id="roulett-div">
 						  <canvas width="380" height='380' style="font-size:10px;"></canvas>  
 						  <button id="rouletteBtn" onclick="rotate()">룰렛 돌리기</button>

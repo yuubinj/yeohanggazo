@@ -29,7 +29,7 @@ body {
 }
 
 .body-title h3 {
-	border-bottom: none;
+	border-bottom: none !important;
 }
 
 .section-title {
@@ -52,6 +52,13 @@ body {
     background-color: #ccc;
     border-radius: 6px;
 }
+
+.myTrip-list-wrapper {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
 </style>
 </head>
 <body>
@@ -70,13 +77,13 @@ body {
 						</h3>
 					</div>
 
-					<div class="body-main">
+					<div class="row board-list-header mb-3">
+						<div class="col-auto me-auto dataCount">
+							${dataCount}개(${pageNo}/${total_page} 페이지)</div>
+						<div class="col-auto">&nbsp;</div>
+					</div>
 
-						<div class="row board-list-header">
-							<div class="col-auto me-auto dataCount">
-								${dataCount}개(${pageNo}/${total_page} 페이지)</div>
-							<div class="col-auto">&nbsp;</div>
-						</div>
+					<div class="body-main myTrip-list-wrapper">
 
 						<div class="row g-3">
 							<c:forEach var="dto" items="${list}" varStatus="status">
@@ -119,9 +126,8 @@ body {
 								</div>
 							</c:forEach>
 						</div>
-					</div>
-
-					<div class="page-navigation">${dataCount == 0 ? "등록된 게시글이 없습니다." : paging}
+						
+						<div class="page-navigation">${dataCount == 0 ? "등록된 게시글이 없습니다." : paging}
 					</div>
 
 					<div class="row board-list-footer">
@@ -168,7 +174,10 @@ body {
 							</c:choose>
 						</div>
 					</div>
+						
+					</div>
 
+					
 				</div>
 			</div>
 		</div>
