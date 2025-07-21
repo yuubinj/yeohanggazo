@@ -39,7 +39,6 @@
 }
 
 </style>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
     let currentPage = 1;
     let loading = false;
@@ -171,7 +170,7 @@
 <script type="text/javascript">
 
 $(document).on('click', '.scrap-image, .scrap-name', function() {
-	openScrapDetailModal(); // 데이터 없이 그냥 모달 띄우기
+	openScrapDetailModal(); 
 });
 
 function openScrapDetailModal(data = {}) {

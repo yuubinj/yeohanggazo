@@ -63,19 +63,20 @@ public class MemberController {
 			
 			// 로그인 전 주소가 존재하는 경우 로그인 전 주소로 리다이렉트
 			String preLoginURI = (String)session.getAttribute("preLoginURI");
-            session.removeAttribute("preLoginURI");
-            
-            if(preLoginURI != null && preLoginURI.contains("/tour/apiIds")) {
-                session.removeAttribute("preLoginURI");
-                return new ModelAndView("redirect:/location/main");
-            }
-            
-            if(preLoginURI != null) {
-                return new ModelAndView(preLoginURI);
-            }
-            
-            // 메인화면으로 리다이렉트
-            return new ModelAndView("redirect:/");
+
+			session.removeAttribute("preLoginURI");
+			
+			if(preLoginURI != null && preLoginURI.contains("/tour/apiIds")) {
+				return new ModelAndView("redirect:/location/main");
+	        }
+			
+			if(preLoginURI != null) {
+				return new ModelAndView(preLoginURI);
+			}
+			
+			// 메인화면으로 리다이렉트
+			return new ModelAndView("redirect:/");
+
 		}
 		
 		// 로그인 실패한 경우 로그인 페이지로 포워딩
