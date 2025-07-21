@@ -16,6 +16,14 @@
 	type="text/css">
 
 <style type="text/css">
+.myTrip-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 70%;
+    cursor: pointer;
+}
+
 body {
     background-color: #f8f9fc;
 }

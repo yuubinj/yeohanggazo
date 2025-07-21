@@ -8,7 +8,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spring</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
+<style type="text/css">
 
+.item-box {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 70%;
+    cursor: pointer;
+    border-radius: 5px;
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+.item-box:hover {
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.nav-link{
+    color: silver;
+}
+
+.nav {
+--bs-nav-link-color: silver;
+}
+
+#rouletteImg {
+    margin: auto;
+    display: block;
+}
+</style>
 </head>
 <body>
 
@@ -54,55 +84,104 @@
 			</div>
 
 		</div>
-		<!-- 게시판 -->
-		<div class="col-md-4 p-1">
-			<div>
-				<div class="fw-semibold pt-2 pb-1">
-					<i class="bi bi-app"></i> 게시판
-				</div>
-
-				<div class="border px-2">
-					<c:forEach var="dto" items="${listBoard}">
-						<div class="text-truncate px-2 subject-list">
-							<a href="${pageContext.request.contextPath}/bbs/article?page=1&num=${dto.num}">${dto.subject}</a>
-						</div>
-					</c:forEach>
-					<c:forEach var="n" begin="${listBoard.size() + 1}" end="5">
-						<div class="text-truncate px-2 subject-list">&nbsp;</div>
-					</c:forEach>
-				</div>
-				<div class="pt-2 text-end">
-					<a href="${pageContext.request.contextPath}/bbs/list"
-						class="text-reset">더보기</a>
-				</div>
-			</div>
+		
+		<div style="margin: 30px;">
+			<img id="rouletteImg" src="${pageContext.request.contextPath}/dist/images/whereToGo.png" 
+				onclick="location.href='${pageContext.request.contextPath}/roulette/main'"
+				style="width: 400px;">
 		</div>
+		
+		<!-- 커뮤니티 -->
+		<div style="margin: 50px">
+			<ul class="nav nav-tabs" id="myTab" role="tablist" style="--bs-nav-tabs-border-width: none; font-weight: bold; font-size: 16px;">
+				<li class="nav-inquiry-item" role="presentation">
+					<button class="nav-link ${selectedCateCommu=='bbs' || selectedCateCommu == null ?'active':''}" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="bbs">자유게시판</button>
+				</li>
+				<li class="nav-inquiry-item" role="presentation">
+					<button class="nav-link ${selectedCateCommu=='myTrip' ?'active':''}" id="tab-1" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="myTrip">내 여행 자랑하기</button>
+				</li>
+				<li class="nav-inquiry-item" role="presentation">
+					<button class="nav-link ${selectedCateCommu=='inquiry' ?'active':''}" id="tab-2" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="inquiry">문의하기</button>
+				</li>
+			</ul>
 
-		<!-- 내 여행 자랑하기 -->
-		<div class="col-md-4 p-1">
-			<div>
-				<div class="fw-semibold pt-2 pb-1">
-					<i class="bi bi-app"></i> 내 여행 자랑하기
-				</div>
-
-				<div class="border px-2">
-					<c:forEach var="dto" items="${listmyTrip}">
-						<div class="text-truncate px-2 subject-list">
-							<a href="${pageContext.request.contextPath}/myTrip/article?page=1&num=${dto.num}">${dto.subject}</a>
-						</div>
-					</c:forEach>
-					<c:forEach var="n" begin="${listmyTrip.size() + 1}" end="5">
-						<div class="text-truncate px-2 subject-list">&nbsp;</div>
-					</c:forEach>
-				</div>
-				<div class="pt-2 text-end">
-					<a href="${pageContext.request.contextPath}/myTrip/list"
-						class="text-reset">더보기</a>
-				</div>
+			<div class="tab-content pt-2" id="nav-tabContent">
+				
+				<div class="tab-pane fade show active" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content"></div>
+			
 			</div>
+
 		</div>
 	</div>
 </main>
+
+<script type="text/javascript">
+function login() {
+	location.href = '${pageContext.request.contextPath}/member/login';
+}
+
+function sendAjaxRequest(url, method, requestParams, responseType, fn, file = false) {
+	const settings = {
+			type: method, 
+			data: requestParams,
+			dataType: responseType,
+			success: function(data) {
+				fn(data);
+			},
+			beforeSend: function(xhr) {
+				xhr.setRequestHeader('AJAX', true);
+			},
+			complete: function () {
+			},
+			error: function(xhr) {
+				if(xhr.status === 403) {
+					login();
+					return false;
+				} else if(xhr.status === 406) {
+					alert('요청 처리가 실패 했습니다.');
+					return false;
+		    	}
+		    	
+				console.log(xhr.responseText);
+			}
+	};
+	
+	if(file) {
+		settings.processData = false;  // file 전송시 필수. 서버로전송할 데이터를 쿼리문자열로 변환여부
+		settings.contentType = false;  // file 전송시 필수. 서버에전송할 데이터의 Content-Type. 기본:application/x-www-urlencoded
+	}
+	
+	$.ajax(url, settings);
+}
+
+$(function(){
+    listPage(1);
+	
+	// 탭이 변경될 때 실행
+    $('button[role="tab"]').on('click', function(e){
+    	
+    	listPage(1);
+    });
+});
+
+function listPage(page) {
+	const $tab = $('button[role="tab"].active');
+	let categoryName = $tab.attr('data-tab');
+
+	let url = '${pageContext.request.contextPath}/home/communityList';
+	let query = 'categoryName=' + categoryName;
+
+	let selector = '#nav-content';
+	
+	const fn = function(data) {
+		$(selector).html(data);
+	};
+	
+	sendAjaxRequest(url, 'get', query, 'text', fn);
+}
+
+
+</script>
 
 <footer>
 	<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

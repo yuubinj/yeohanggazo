@@ -50,6 +50,7 @@
 							href="${pageContext.request.contextPath}/faq/main">FAQ</a></li>
 					</ul></li>
 
+				<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/roulette/main">어디 갈까?</a></li>
 			</ul>
 		</div>
 
@@ -159,11 +160,6 @@
 						<div>
 							<button type="button" class="btn btn-primary w-100"
 								onclick="sendModalLogin();">Login</button>
-						</div>
-						<div>
-							<p class="form-control-plaintext text-center">
-								<a href="#" class="text-decoration-none me-2">패스워드를 잊으셨나요 ?</a>
-							</p>
 						</div>
 					</form>
 					<hr class="mt-3">

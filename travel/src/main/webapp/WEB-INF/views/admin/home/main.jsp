@@ -31,7 +31,7 @@
 								<c:if test="${list.size()==0}">
 									<img
 										src="${pageContext.request.contextPath}/dist/images/bg.png"
-										class="d-block w-80" style="max-height: 215px;">
+										class="d-block w-80" style="max-height: 215px; cursor: pointer;">
 								</c:if>
 							</c:forEach>
 						</div>
