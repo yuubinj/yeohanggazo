@@ -38,13 +38,6 @@
   font-weight: bold;
 }
 
-.modal {
-  z-index: 99999 !important;
-}
-
-.modal-backdrop {
-  z-index: 99998 !important;
-}
 </style>
 <script type="text/javascript">
     let currentPage = 1;
@@ -60,21 +53,10 @@
             type: "GET",
             data: { pageNo: currentPage },
             success: function(result) {
-                const trimmed = result.trim();
-                if (trimmed.length === 0) {
-                    if (currentPage === 1) {
-                        // 첫 페이지인데 데이터 없음 ⇒ 기본 안내 출력
-                        $("#scrapContent").html(`
-                            <div class="text-center text-muted mt-4">
-                              <i class="fa-regular fa-folder-open fa-2x"></i><br/>
-                              등록된 스크랩이 없습니다.
-                            </div>
-                        `);
-                    }
+                if (result.trim().length === 0) {
                     lastPageReached = true;
                     return;
                 }
-
                 $("#scrapContent").append(result);
                 currentPage++;
             },
@@ -92,7 +74,7 @@
     }
 
     $(document).ready(function() {
-        loadScrapList(); // 최초 한 번은 무조건 호출됨
+        loadScrapList();
 
         $(window).on("scroll", function() {
             if ($(window).scrollTop() + $(window).height() > $(document).height() - 100) {
@@ -158,7 +140,7 @@
 
 <!-- 모달창 -->
 <!-- 상세정보 모달 -->
-<div class="modal fade" id="scrapDetailModal" tabindex="-1" aria-labelledby="scrapDetailModalLabel">
+<div class="modal fade" id="scrapDetailModal" tabindex="-1" aria-labelledby="scrapDetailModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -187,15 +169,18 @@
 
 <script type="text/javascript">
 
-function openScrapDetailModal(data) {
+$(document).on('click', '.scrap-image, .scrap-name', function() {
+	openScrapDetailModal(); 
+});
+
+function openScrapDetailModal(data = {}) {
 	$('#scrapDetailImg').attr('src', data.firstimage || '/images/default.jpg');
 	$('#scrapDetailName').text(data.title || '정보 없음');
 	$('#scrapDetailAddr').text((data.addr1 || '') + ' ' + (data.addr2 || ''));
 	$('#scrapDetailTel').text(data.tel || '전화번호 정보 없음');
-	console.log(data.homepage);
+	
 	if (data.homepage) {
-	  let url = data.homepage;
-	  $('#scrapDetailHomepage').attr('href', url).html(url);
+	  $('#scrapDetailHomepage').attr('href', data.homepage).text(data.homepage);
 	} else {
 	  $('#scrapDetailHomepage').attr('href', '#').text('홈페이지 없음');
 	}
@@ -207,22 +192,7 @@ function openScrapDetailModal(data) {
 }
 
 $(document).on('click', '.scrap-image, .scrap-name', function () {
-	let apiId = $(this).closest('.scrap-card').find('.star-btn').data('apiid');
-    if (!apiId) return;
-
-    $.ajax({
-        url: '${pageContext.request.contextPath}/myPage/scrap/details',
-        method: 'GET',
-        data: { contentId: apiId },
-        dataType: 'json',
-        success: function(data) {
-            const item = data.response.body.items.item[0];
-            openScrapDetailModal(item);
-        },
-        error: function(xhr) {
-            console.error('에러:', xhr.responseText);
-        }
-    });
+	
 });
 </script>
 
