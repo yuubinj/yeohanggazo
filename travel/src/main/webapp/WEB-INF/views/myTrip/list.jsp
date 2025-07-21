@@ -136,6 +136,8 @@
 	</main>
 
 <script type="text/javascript">
+
+
 // 검색 키워드 입력란에서 엔터를 누른 경우 서버 전송 막기 
 window.addEventListener('DOMContentLoaded', () => {
 	const inputEL = document.querySelector('form input[name=kwd]'); 
@@ -162,6 +164,7 @@ function searchList() {
 	let url = '${pageContext.request.contextPath}/myTrip/list';
 	location.href = url + '?' + params;
 }
+
 
 function goToArticle(num) {
 	let params = 'pageNo=${pageNo}&schType=${schType}&kwd=${kwd}';

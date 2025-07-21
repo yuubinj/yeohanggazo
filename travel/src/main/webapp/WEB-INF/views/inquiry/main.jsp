@@ -24,6 +24,10 @@
 	border-left: 1px solid #dbdddf;
 }
 
+.nav-item {
+	margin: 0px;
+}
+
 .nav-tabs .nav-link.active {
 	background: #3d3d4f;
 	color: #fff;

@@ -36,7 +36,7 @@
 }
 
 .faq-subject .faq-q {
-	color: #0d6efd;
+	color: #56a5da;
 	font-weight: bold;
 }
 

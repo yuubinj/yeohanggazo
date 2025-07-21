@@ -2,6 +2,20 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
+<style type="text/css">
+.btn-primary {
+	background-color: #91c4e8;
+	color: #fff;
+	border: none;
+	height: 50px;
+	font-size: 16px;
+}
+
+.btn-primary:hover {
+	background-color: #56a5da;
+}
+</style>
+
 <nav class="navbar navbar-expand-lg navbar-light" style="height: 80px">
 	<div
 		class="header container d-flex align-items-center justify-content-between">
@@ -52,7 +66,7 @@
 					<div class="p-2">
 						<a href="${pageContext.request.contextPath}/member/account"
 							title="회원가입"> <span
-							style="margin-bottom: 0; background: #fff; padding: 2px 5px; border-radius: 3px">Sign
+							style="margin-bottom: 0; color: #fff;">Sign
 								up</span>
 						</a>
 					</div>
@@ -81,44 +95,31 @@
 			</button>
 
 			<div class="header-avatar">
-				<c:if test="${not empty sessionScope.member}">
-					<c:choose>
-						<c:when test="${not empty sessionScope.member.avatar}">
-							<img
-								src="${pageContext.request.contextPath}/uploads/member/${sessionScope.member.avatar}"
-								class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown"
-								aria-expanded="false">
-						</c:when>
-						<c:otherwise>
-							<img
-								src="${pageContext.request.contextPath}/dist/images/avatar.png"
-								class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown"
-								aria-expanded="false">
-						</c:otherwise>
-					</c:choose>
-					<ul class="dropdown-menu dropdown-content">
-						<li><a
-							href="${pageContext.request.contextPath}/member/myPage"
-							class="dropdown-item">마이페이지</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a href="${pageContext.request.contextPath}/"
-							class="dropdown-item">사진첩</a></li>
-						<li><a href="${pageContext.request.contextPath}/"
-							class="dropdown-item">일정관리</a></li>
-						<li><a href="#" class="dropdown-item">쪽지함</a></li>
-						<li><a href="${pageContext.request.contextPath}/"
-							class="dropdown-item">메일</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a href="${pageContext.request.contextPath}/member/pwd"
-							class="dropdown-item">정보수정</a></li>
-						<c:if test="${sessionScope.member.userLevel < 51}">
-							<li><a
-								href="${pageContext.request.contextPath}/member/pwd?mode=delete"
-								class="dropdown-item">회원탈퇴</a></li>
-						</c:if>
-					</ul>
-				</c:if>
-			</div>
+					<c:if test="${not empty sessionScope.member}">
+						<c:choose>
+							<c:when test="${not empty sessionScope.member.avatar}">
+								<img src="${pageContext.request.contextPath}/uploads/member/${sessionScope.member.avatar}" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							</c:when>
+							<c:otherwise>
+								<img src="${pageContext.request.contextPath}/dist/images/avatar.png" class="avatar-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+							</c:otherwise>
+						</c:choose>
+						<ul class="dropdown-menu">
+							
+							<li><a href="${pageContext.request.contextPath}/myPage/myPage" class="dropdown-item">마이페이지</a></li>
+							<li><hr class="dropdown-divider"></li>
+							<li><a href="${pageContext.request.contextPath}/myPage/schedule/main" class="dropdown-item">일정관리</a></li>
+							<li><a href="${pageContext.request.contextPath}/myPage/scrap/main" class="dropdown-item">즐겨찾기</a></li>
+								   	
+							<li><hr class="dropdown-divider"></li>
+							<li><a href="${pageContext.request.contextPath}/member/pwd" class="dropdown-item">정보수정</a></li>
+							<c:if test="${sessionScope.member.userLevel < 51}">
+								<li><a href="${pageContext.request.contextPath}/member/pwd?mode=delete" class="dropdown-item">회원탈퇴</a></li>
+							</c:if>
+						</ul>
+					</c:if>
+				</div>
+			
 		</div>
 	</div>
 
@@ -156,7 +157,7 @@
 							</div>
 						</div>
 						<div>
-							<button type="button" class="btn btn-primary w-100" style="background: #1c5888; border-color: none;"
+							<button type="button" class="btn btn-primary w-100"
 								onclick="sendModalLogin();">Login</button>
 						</div>
 						<div>

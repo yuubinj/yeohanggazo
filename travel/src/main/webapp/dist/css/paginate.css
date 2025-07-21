@@ -37,14 +37,14 @@
 .paginate a:hover, 
 .paginate a:focus {
   z-index: 2;
-  color: #106eea;  
+  color: #56a5da;  
 }
 
 .paginate span {
   z-index: 3;
   color: #ffffff;
-  background-color: #106eea;
-  border-color: #106eea;
+  background-color: #56a5da;
+  border-color: #56a5da;
 }
 
 .paginate :first-child {

@@ -38,10 +38,15 @@
 }
 
 .btn-primary {
-	background-color: #5f0080;
+	background-color: #91c4e8;
+	color: #fff;
 	border: none;
 	height: 50px;
 	font-size: 16px;
+}
+
+.btn-primary:hover {
+	background-color: #56a5da;
 }
 
 .btn-light {
@@ -59,9 +64,11 @@
 .text-section {
 	margin-bottom: 28px;
 }
+
+input {
+	border-radius: 5px;
+}
 </style>
-
-
 
 </head>
 <body>
@@ -125,7 +132,7 @@
 								<div class="d-flex gap-2">
 									<input type="text" class="form-control wrap-userId" id="userId"
 										name="userId" value="${dto.userId}"
-										${mode=="update" ? "readonly" : ""} autofocus>
+										${mode=="update" ? "readonly" : ""} autofocus style="border-radius: 5px;">
 									<c:if test="${mode=='account'}">
 										<button type="button" class="btn btn-light col-auto"
 											onclick="userIdCheck();">중복확인</button>
@@ -140,7 +147,7 @@
 							<div class="text-section">
 								<label class="form-label" for="userPwd">비밀번호</label> <input
 									type="password" class="form-control" id="userPwd"
-									name="userPwd" autocomplete="off">
+									name="userPwd" autocomplete="off" style="border-radius: 5px;">
 								<div class="help-block">영문자 포함, 숫자/특수문자 포함 5~10자</div>
 							</div>
 
@@ -148,7 +155,7 @@
 							<div class="text-section">
 								<label class="form-label" for="userPwd2">비밀번호 확인</label> <input
 									type="password" class="form-control" id="userPwd2"
-									name="userPwd2" autocomplete="off">
+									name="userPwd2" autocomplete="off" style="border-radius: 5px;">
 								<div class="help-block">비밀번호를 다시 입력하세요.</div>
 							</div>
 
@@ -156,14 +163,16 @@
 							<div class="text-section">
 								<label class="form-label" for="userName">이름</label> <input
 									type="text" class="form-control" id="userName" name="userName"
-									value="${dto.userName}" ${mode=="update" ? "readonly" : ""}>
+									value="${dto.userName}" ${mode=="update" ? "readonly" : ""}
+									style="border-radius: 5px;">
 							</div>
 
 							<!-- 생년월일 -->
 							<div class="text-section">
 								<label class="form-label" for="birth">생년월일</label> <input
 									type="date" class="form-control" id="birth" name="birth"
-									value="${dto.birth}" ${mode=="update" ? "readonly" : ""}>
+									value="${dto.birth}" ${mode=="update" ? "readonly" : ""}
+									style="border-radius: 5px;">
 							</div>
 
 							<!-- 이메일 -->
@@ -173,18 +182,20 @@
 									<!-- 이메일 아이디 입력 -->
 									<div class="col-4">
 										<input type="text" class="form-control" name="email1"
-											placeholder="이메일 아이디" value="${dto.email1}">
+											placeholder="이메일 아이디" value="${dto.email1}"
+											style="border-radius: 5px;">
 									</div>
 
 									<!-- @ 표시 -->
 									<div class="col-auto">
-										<span class="input-group-text">@</span>
+										<span class="input-group-text" style="border-radius: 5px;">@</span>
 									</div>
 
 									<!-- 이메일 도메인 입력 -->
 									<div class="col-4">
 										<input type="text" class="form-control" name="email2"
-											id="email2" placeholder="도메인" value="${dto.email2}" readonly>
+											id="email2" placeholder="도메인" value="${dto.email2}" readonly
+											style="border-radius: 5px;">
 									</div>
 
 									<!-- 셀렉트박스 -->
@@ -212,7 +223,8 @@
 							<div class="text-section">
 								<label class="form-label" for="tel">전화번호</label> <input
 									type="text" class="form-control" id="tel" name="tel"
-									value="${dto.tel}">
+									value="${dto.tel}"
+									style="border-radius: 5px;">
 							</div>
 
 							<!-- 우편번호 -->
@@ -220,7 +232,8 @@
 								<label class="form-label" for="zip">우편번호</label>
 								<div class="d-flex gap-2">
 									<input type="text" class="form-control" id="zip" name="zip"
-										value="${dto.zip}" readonly tabindex="-1">
+										value="${dto.zip}" readonly tabindex="-1"
+										style="border-radius: 5px;">
 									<button type="button" class="btn btn-light col-auto"
 										onclick="daumPostcode();">우편번호 찾기</button>
 								</div>
@@ -230,9 +243,11 @@
 							<div class="text-section">
 								<label class="form-label" for="addr1">주소</label> <input
 									type="text" class="form-control mb-2" id="addr1" name="addr1"
-									value="${dto.addr1}" readonly placeholder="기본 주소" tabindex="-1">
+									value="${dto.addr1}" readonly placeholder="기본 주소" tabindex="-1"
+									style="border-radius: 5px;">
 								<input type="text" class="form-control" id="addr2" name="addr2"
-									value="${dto.addr2}" placeholder="상세 주소">
+									value="${dto.addr2}" placeholder="상세 주소"
+									style="border-radius: 5px;">
 							</div>
 
 							<!-- 약관 동의 -->
@@ -249,12 +264,12 @@
 							</div>
 
 							<!-- 버튼 -->
-							<div class="text-center mt-4 row">
+							<div class="text-center mt-4 row" style="display: flex; justify-content: center; column-gap: 5%;">
 								<button type="button" name="sendButton"
-									class="btn btn-primary mb-2 col-4" onclick="memberOk();">
+									class="btn btn-primary mb-2 col-3" onclick="memberOk();">
 									${mode=="update"?"정보수정":"회원가입"}</button>
-								<button type="reset"class="btn btn-light col-4">초기화</button>	
-								<button type="button" class="btn btn-light col-4"
+								<button type="reset"class="btn btn-light col-3">초기화</button>	
+								<button type="button" class="btn btn-light col-3"
 									onclick="location.href='${pageContext.request.contextPath}/';">
 									${mode=="update"?"수정취소":"가입취소"}</button>
 								<input type="hidden" name="userIdValid" id="userIdValid"

@@ -10,10 +10,15 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <style type="text/css">
 .btn-primary {
-	background-color: #5f0080;
+	background-color: #91c4e8;
+	color: #fff;
 	border: none;
 	height: 50px;
 	font-size: 16px;
+}
+
+.btn-primary:hover {
+	background-color: #56a5da;
 }
 </style>
 

@@ -109,7 +109,7 @@ public class MyTripController {
 				articleUrl += "&" + query;
 			}
 			
-			String paging = util.paging(current_page, total_page, listUrl);
+			String paging = util.pagingNo(current_page, total_page, listUrl);
 			
 			mav.addObject("list", list);
 			mav.addObject("pageNo", current_page);

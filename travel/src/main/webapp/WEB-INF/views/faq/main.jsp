@@ -24,7 +24,7 @@
 	color: #1e1e1e;
 }
 .body-title i {
-	color: #0d6efd;
+	color: #56a5da;
 	font-size: 26px;
 	margin-right: 10px;
 }
@@ -54,9 +54,9 @@
 	border-right: 1px solid #dee2e6;
 }
 .nav-tabs .nav-link.active {
-	background: #0d6efd;
+	background: #56a5da;
 	color: #ffffff;
-	border-color: #0d6efd;
+	border-color: #56a5da;
 }
 
 .input-group input[type="text"] {
@@ -90,6 +90,10 @@
 	font-size: 14px;
 	color: #555;
 	margin-top: 10px;
+}
+
+.nav-item {
+	margin: 0px;
 }
 </style>
 </head>
