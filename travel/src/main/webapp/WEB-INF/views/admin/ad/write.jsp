@@ -114,7 +114,7 @@
 											<span class="image-viewer"></span>
 											<input type="file" name="selectFile" id="selectFile" hidden="" accept="image/png, image/jpeg, image/jpg">
 											<c:if test="${mode=='update'}">
-												<input type="hidden" name="saveFilename" value="${dto.imageFilename}">
+												<input type="hidden" name="imageFilename" value="${dto.imageFilename}">
 											</c:if>
 										</label>
 									</div>

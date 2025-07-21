@@ -8,9 +8,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Spring</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 
 <style type="text/css">
+/* 전체 배경 */
+body {
+    background-color: #f8f9fc;
+}
+
+.body-title h3 {
+	border-bottom: none;
+}
+
+
+/* 제목 스타일 */
+.section-title {
+    position: relative;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 24px;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 200px;
+    height: 3px;
+    background-color: #ccc;
+    border-radius: 6px;
+}
+
 .nav-tabs .nav-link {
 	min-width: 130px;
 	background: #f3f5f7;
@@ -20,12 +53,13 @@
 	color: #333;
 	font-weight: 600;
 }
-.nav-tabs .nav-item:first-child .nav-link {
-	border-left: 1px solid #dbdddf;
+
+.nav-inquiry-item{
+	margin: 0px;
 }
 
-.nav-item {
-	margin: 0px;
+.nav-tabs .nav-item:first-child .nav-link {
+	border-left: 1px solid #dbdddf;
 }
 
 .nav-tabs .nav-link.active {
@@ -50,18 +84,18 @@
 			<div class="col-md-10 my-3 p-3">
 
 				<div class="body-title">
-					<h3><i class="bi bi-question-octagon"></i> 문의 </h3>
+					<h3 class="section-title"><i class="bi bi-question-octagon"></i> 문의 </h3>
 				</div>
 				
 				<div class="body-main">
 
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
-						<li class="nav-item" role="presentation">
+						<li class="nav-inquiry-item" role="presentation">
 							<button class="nav-link ${selectedCategoryNum==vo.categoryNum || selectedCategoryNum == 0 ?'active':''}" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">모두</button>
 						</li>
 						
 						<c:forEach var="vo" items="${listCategory}" varStatus="status">
-							<li class="nav-item" role="presentation">
+							<li class="nav-inquiry-item" role="presentation">
 								<button class="nav-link ${selectedCategoryNum==vo.categoryNum?'active':''}" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="${vo.categoryNum}">${vo.category}</button>
 							</li>
 						</c:forEach>

@@ -27,7 +27,7 @@ public class HomeController {
 		
 		try {
 			AdDAO adDao = new AdDAO();
-			List<AdDTO> listAd = adDao.listAd(0, 5);
+			List<AdDTO> listAd = adDao.listAd(0, 6);
 			
 			BoardDAO boardDao = new BoardDAO();
 			List<BoardDTO> listBoard = boardDao.listBoard(0, 5);

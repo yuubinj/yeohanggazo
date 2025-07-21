@@ -253,20 +253,20 @@ public class AdManageController {
 			dto.setNum(Long.parseLong(req.getParameter("num")));
 			dto.setSubject(req.getParameter("subject"));
 			dto.setHide(Integer.parseInt(req.getParameter("hide")));
-			dto.setImageFilename(req.getParameter("saveFilename"));
 			
-			//System.out.println(dto.getImageFilename());
+			String imageFilename = req.getParameter("imageFilename");
+			dto.setImageFilename(imageFilename);
+			
 			String filename = null;
-			Part p = req.getPart("saveFilename");
+			Part p = req.getPart("selectFile");
 			MyMultipartFile multiFile = fileManager.doFileUpload(p, pathname);
 			//System.out.println(multiFile);
 			if(multiFile != null) {
 				filename = multiFile.getSaveFilename();
-			}
-			
-			if(filename != null) {
+				fileManager.doFiledelete(pathname, imageFilename);
 				dto.setImageFilename(filename);
 			}
+			
 			dao.updateAd(dto);
 			
 		} catch (Exception e) {

@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>자주하는 질문</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
 
 <style type="text/css">
@@ -29,34 +30,26 @@
 	margin-right: 10px;
 }
 
-.nav-tabs {
-	border-bottom: none;
-	margin-bottom: 1rem;
-	justify-content: flex-start;
-	flex-wrap: nowrap;
-	gap: 0;
-}
-.nav-tabs .nav-item {
-	margin-right: 0;
-}
 .nav-tabs .nav-link {
-	min-width: 80px;
-	padding: 6px 16px;
-	font-weight: 500;
-	color: #1a1a1a;
-	border: 1px solid #dee2e6;
-	border-right: none;
+	min-width: 130px;
+	background: #f3f5f7;
 	border-radius: 0;
-	background: #ffffff;
-	transition: all 0.2s ease;
+	border-top: 1px solid #dbdddf;
+	border-right: 1px solid #dbdddf;
+	color: #333;
+	font-weight: 600;
 }
-.nav-tabs .nav-item:last-child .nav-link {
-	border-right: 1px solid #dee2e6;
+.nav-tabs .nav-item:first-child .nav-link {
+	border-left: 1px solid #dbdddf;
 }
+
+.nav-faq-item {
+	margin: 0px;
+}
+
 .nav-tabs .nav-link.active {
-	background: #56a5da;
-	color: #ffffff;
-	border-color: #56a5da;
+	background: #3d3d4f;
+	color: #fff;
 }
 
 .input-group input[type="text"] {
@@ -91,10 +84,6 @@
 	color: #555;
 	margin-top: 10px;
 }
-
-.nav-item {
-	margin: 0px;
-}
 </style>
 </head>
 <body>
@@ -115,11 +104,11 @@
 				
 				<div class="body-main">
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
-						<li class="nav-item" role="presentation">
+						<li class="nav-faq-item" role="presentation">
 							<button class="nav-link active" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">전체</button>
 						</li>
 						<c:forEach var="vo" items="${listCategory}" varStatus="status">
-							<li class="nav-item" role="presentation">
+							<li class="nav-faq-item" role="presentation">
 								<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="false" data-tab="${vo.categoryNum}">${vo.category}</button>
 							</li>
 						</c:forEach>
