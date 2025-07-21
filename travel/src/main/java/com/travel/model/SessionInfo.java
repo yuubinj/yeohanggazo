@@ -7,7 +7,32 @@ public class SessionInfo {
 	private int userLevel;
 	private String avatar; // profile photo
 	private String locationName;
+	private String register_date;
+	private String email;
+	private String tel;
+
 	
+	
+	public String getTel() {
+		return tel;
+	}
+	public void setTel(String tel) {
+		this.tel = tel;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	
+	
+	public String getRegister_date() {
+		return register_date;
+	}
+	public void setRegister_date(String register_date) {
+		this.register_date = register_date;
+	}
 	public Long getMemberIdx() {
 		return memberIdx;
 	}

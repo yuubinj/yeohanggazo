@@ -19,7 +19,7 @@ public class MemberDAO {
 		
 		try {
 			sql = "SELECT memberIdx, m1.userId, userPwd, userName, userLevel, profile_photo, "
-					+ " register_date, modify_date, zip, addr1, addr2, locationName "
+					+ " register_date, modify_date, zip, addr1, addr2, locationName, email,tel "
 					+ " FROM member1 m1 "
 					+ " LEFT OUTER JOIN member2 m2 ON m1.userId = m2.userId "
 					+ " WHERE m1.userId = ? AND userPwd = ? AND enabled = 1";
@@ -45,6 +45,8 @@ public class MemberDAO {
 				dto.setAddr1(rs.getString("addr1"));
 				dto.setAddr2(rs.getString("addr2"));
 				dto.setLocationName(rs.getString("locationName"));
+				dto.setEmail(rs.getString("email"));
+				dto.setTel(rs.getString("tel"));
 			}
 			
 		} catch (Exception e) {
@@ -262,4 +264,24 @@ public class MemberDAO {
 		}
 	}
 	
+	
+	public void deleteMember(String userId) throws SQLException {
+		PreparedStatement pstmt = null;
+		String sql;
+		try {
+			sql = "delete from member1 where userId = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, userId);
+			
+			pstmt.executeUpdate();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+		}
+	}
 }

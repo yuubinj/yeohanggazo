@@ -54,6 +54,9 @@ public class MemberController {
 			info.setAvatar(dto.getProfile_photo());
 			info.setUserLevel(dto.getUserLevel());
 			info.setLocationName(dto.getLocationName());
+			info.setRegister_date(dto.getRegister_date());
+			info.setEmail(dto.getEmail());
+			info.setTel(dto.getTel());
 			
 			// 세션에 member 라는 이름으로 로그인 정보 저장
 			session.setAttribute("member", info);
@@ -171,7 +174,7 @@ public class MemberController {
 	
 	@RequestMapping(value = "/member/complete", method = RequestMethod.GET)
 	public ModelAndView complete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 회원가입 / 회원 수정 완료후
+		// 회원가입 / 회원 수정 완료후 / 회원탈퇴 완료후
 		HttpSession session = req.getSession();
 		
 		String mode = (String)session.getAttribute("mode");
@@ -184,17 +187,19 @@ public class MemberController {
 			return new ModelAndView("redirect:/");
 		}
 		
-		String title;
+		String title = null;
 		String message = "<b>" + userName + "</b>님 ";
-		
+
 		if(mode.equals("account")) {
 			title = "회원가입";
 			message += "회원가입이 완료 되었습니다.<br>로그인 하시면 정보를 이용할수 있습니다.";
-		} else {
+		} else if(mode.equals("update")) {
 			title = "정보수정";
 			message += "회원정보가 수정되었습니다.<br>메인 화면으로 이동하시기 바랍니다.";
+		} else {
+			title = "회원탈퇴";
+			message += "회원탈퇴가 완료되었습니다.<br>메인 화면으로 이동하시기 바랍니다.";
 		}
-		
 		ModelAndView mav = new ModelAndView("member/complete");
 		
 		mav.addObject("title", title);
@@ -265,8 +270,13 @@ public class MemberController {
 			
 			if(mode.equals("delete")) {
 				// 회원 탈퇴
+				dao.deleteMember(info.getUserId());
 				
-				return new ModelAndView("redirect:/");
+				session.removeAttribute("member");
+				session.setAttribute("mode", "delete");
+			    session.setAttribute("userName", info.getUserName());
+			    
+				return new ModelAndView("redirect:/member/complete");
 			} 
 			
 			// 정보수정 화면
