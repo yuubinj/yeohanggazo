@@ -1,7 +1,11 @@
 package com.travel.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +96,54 @@ public class mypageScrapController {
 		return model;
 	}
 	
-	
+	@RequestMapping(value = "/myPage/scrap/details", method = RequestMethod.GET)
+	public void apiScrapDetails(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	    // 1. 요청 파라미터 받기
+	    String contentId = req.getParameter("contentId");
+
+	    // 2. 외부 API URL 조립 (반드시 http:// 붙이기)
+	    String apiUrl = "http://apis.data.go.kr/B551011/KorService2/detailCommon2"
+	        + "?serviceKey=vZe%2B%2F38iaAWk%2FCcax8T8D8GkUu0fsUpUfbqcKsm6%2BuRPCCFffelICypoPk9hpC2zaFLYI9V6ve%2FiT85gNC2ckQ%3D%3D"
+	        + "&MobileOS=ETC"
+	        + "&MobileApp=AppTest"
+	        + "&_type=json"
+	        + "&contentId=" + contentId;
+
+	    try {
+	        // 3. URL 객체 생성 및 연결
+	        URL url = new URL(apiUrl);
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
+
+	        int responseCode = conn.getResponseCode();
+	        BufferedReader br;
+
+	        if (responseCode == 200) {
+	            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        } else {
+	            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+	        }
+
+	        StringBuilder sb = new StringBuilder();
+	        String line;
+	        while ((line = br.readLine()) != null) {
+	            sb.append(line);
+	        }
+	        br.close();
+
+	        // 4. JSON 결과를 응답에 바로 출력
+	        resp.setContentType("application/json;charset=UTF-8");
+	        PrintWriter out = resp.getWriter();
+	        out.print(sb.toString());
+	        out.flush();
+
+	    } catch (MalformedURLException e) {
+	        e.printStackTrace();
+	        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "잘못된 API 주소");
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "API 호출 실패");
+	    }
+	}
 	
 }
