@@ -1948,9 +1948,110 @@ public class BoardDAO {
 		}
 	}
     
-    
-    
+
     // showReply : 1 표시된 상태, 0 숨김상태, block: 0보여짐, 1차단
+    // 댓글/답글 차단 
+    public void blockReply(long replyNum, Long parentNum) throws SQLException {
+        PreparedStatement pstmt = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("UPDATE bbsReply SET block = 1 WHERE replyNum = ? AND showReply = 1 ");
+
+            if (parentNum == null) {
+                sb.append("AND parentNum IS NULL");
+                pstmt = conn.prepareStatement(sb.toString());
+                pstmt.setLong(1, replyNum);
+            } else {
+                sb.append("AND parentNum = ?");
+                pstmt = conn.prepareStatement(sb.toString());
+                pstmt.setLong(1, replyNum);
+                pstmt.setLong(2, parentNum);
+            }
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DBUtil.close(pstmt);
+        }
+    }
     
+    // 댓글/답글 차단해제
+    public void unblockReply(long replyNum, Long parentNum) throws SQLException {
+        PreparedStatement pstmt = null;
+        StringBuilder sb = new StringBuilder();
+
+        try {
+            sb.append("UPDATE bbsReply SET block = 0 WHERE replyNum = ? AND showReply = 1 ");
+
+            if (parentNum == null) {
+                sb.append("AND parentNum IS NULL");
+                pstmt = conn.prepareStatement(sb.toString());
+                pstmt.setLong(1, replyNum);
+            } else {
+                sb.append("AND parentNum = ?");
+                pstmt = conn.prepareStatement(sb.toString());
+                pstmt.setLong(1, replyNum);
+                pstmt.setLong(2, parentNum);
+            }
+
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DBUtil.close(pstmt);
+        }
+    }
     
+    // 댓글/답글 찾기
+    public BbsReplyDTO findReplyByReplyNum(long replyNum) throws SQLException {
+    BbsReplyDTO dto = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    StringBuilder sb = new StringBuilder();
+
+    try {
+		sb.append("SELECT r.replyNum, r.num, r.userId, r.content, r.reg_date, ");
+		sb.append("r.parentNum, r.showReply, r.block, ");
+		sb.append("m.userName, m.profilePhoto ");
+		sb.append("FROM bbsReply r ");
+		sb.append("JOIN member1 m ON r.userId = m.userId ");
+		sb.append("WHERE r.replyNum = ?");
+
+        pstmt = conn.prepareStatement(sb.toString());
+        pstmt.setLong(1, replyNum);
+
+        rs = pstmt.executeQuery();
+        if (rs.next()) {
+            dto = new BbsReplyDTO();
+
+            dto.setReplyNum(rs.getLong("replyNum"));
+            dto.setNum(rs.getLong("num"));
+            dto.setUserId(rs.getString("userId"));
+            dto.setContent(rs.getString("content"));
+            dto.setReg_date(rs.getString("reg_date"));
+            dto.setParentNum(rs.getLong("parentNum"));
+            dto.setShowReply(rs.getInt("showReply"));
+            dto.setBlock(rs.getInt("block"));
+            
+            long parentNum = rs.getLong("parentNum");
+            if (rs.wasNull()) {
+                parentNum = 0;
+            }
+            dto.setParentNum(parentNum);
+        }
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+        throw e;
+    } finally {
+        DBUtil.close(rs);
+        DBUtil.close(pstmt);
+    }
+
+    return dto;
+    }
 } 

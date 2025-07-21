@@ -8,112 +8,141 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>자주하는 질문</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
-<link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
-
 <style type="text/css">
-.container {
-	max-width: 768px;
+body {
+    background-color: #f8f9fc;
 }
 
-.body-title {
-	display: flex;
-	align-items: center;
-	margin-bottom: 1.2rem;
-	font-size: 20px;
-	font-weight: bold;
-	color: #1e1e1e;
-}
-.body-title i {
-	color: #56a5da;
-	font-size: 26px;
-	margin-right: 10px;
+.faq-wrapper {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    margin-top: 20px;
 }
 
-.nav-tabs .nav-link {
-	min-width: 130px;
-	background: #f3f5f7;
-	border-radius: 0;
-	border-top: 1px solid #dbdddf;
-	border-right: 1px solid #dbdddf;
-	color: #333;
-	font-weight: 600;
+.faq-title-section {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 35px;
 }
-.nav-tabs .nav-item:first-child .nav-link {
-	border-left: 1px solid #dbdddf;
+.faq-title-icon {
+    font-size: 24px;
+    color: #56a5da;
+    margin-right: 8px;
+}
+.faq-title-text {
+    font-weight: 600;
+    font-size: 22px;
+    color: #1e1e1e;
+}
+.faq-title-underline {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 100%;
+}
+.faq-title-underline .line-bold {
+    width: 220px;
+    height: 4px;
+    background-color: #c0c0c0;
+    border-radius: 3px;
+    margin-right: 4px;
+}
+.faq-title-underline .line-thin {
+    flex-grow: 1;
+    height: 1px;
+    background-color: #dcdcdc;
 }
 
-.nav-faq-item {
-	margin: 0px;
+.faq-tabs {
+    border-bottom: none;
+    margin-bottom: 1rem;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: 12px;
 }
-
-.nav-tabs .nav-link.active {
-	background: #3d3d4f;
-	color: #fff;
+.faq-tabs .nav-item {
+    margin: 0;
 }
-
-.input-group input[type="text"] {
-	height: 42px;
-	border-radius: 4px;
+.faq-tabs .nav-link {
+    min-width: 100px;
+    padding: 6px 16px;
+    font-weight: 600;
+    color: #333;
+    border: 1px solid #dee2e6;
+    border-radius: 0;
+    background-color: #ffffff;
+    transition: all 0.2s;
+}
+.faq-tabs .nav-link.active {
+    background-color: #56a5da;
+    color: white;
+    border-color: #56a5da;
+}
+.faq-tabs .nav-link:hover {
+    background-color: #e2eef6;
+    color: #0d6efd;
 }
 
 .faq-list .q-icon {
-	color: #0d6efd;
-	font-weight: 700;
-	margin-right: 6px;
+    color: #0d6efd;
+    font-weight: 700;
+    margin-right: 6px;
 }
-
 .faq-list .item {
-	border: 1px solid #dfe3e8;
-	border-radius: 6px;
-	padding: 15px 18px;
-	margin-bottom: 12px;
-	background-color: #ffffff;
+    border: 1px solid #dfe3e8;
+    border-radius: 6px;
+    padding: 15px 18px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
 }
 .faq-list .item:hover {
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
 }
-
 .faq-list .item .text-muted {
-	font-size: 13px;
-	color: #6c757d;
-	margin-top: 4px;
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 4px;
 }
 .faq-list .item .text-secondary {
-	font-size: 14px;
-	color: #555;
-	margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
 }
 </style>
 </head>
 <body>
-
 <header>
 	<jsp:include page="/WEB-INF/views/layout/header.jsp"/>
 </header>
-
 <main>
 	<div class="container">
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
-
-				<div class="body-title">
-					<i class="bi bi-question-circle-fill"></i>
-					자주하는 질문
+				<div class="faq-title-section">
+				    <i class="bi bi-question-circle-fill faq-title-icon"></i>
+				    <span class="faq-title-text">자주하는 질문</span>
+				    <div class="faq-title-underline">
+				        <div class="line-bold"></div>
+				        <div class="line-thin"></div>
+				    </div>
 				</div>
-				
-				<div class="body-main">
-					<ul class="nav nav-tabs" id="myTab" role="tablist">
-						<li class="nav-faq-item" role="presentation">
+				<div class="faq-wrapper">
+					<ul class="nav nav-tabs faq-tabs" id="myTab" role="tablist">
+						<li class="nav-item" role="presentation">
 							<button class="nav-link active" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="0">전체</button>
 						</li>
 						<c:forEach var="vo" items="${listCategory}" varStatus="status">
-							<li class="nav-faq-item" role="presentation">
+							<li class="nav-item" role="presentation">
 								<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="false" data-tab="${vo.categoryNum}">${vo.category}</button>
 							</li>
 						</c:forEach>
 					</ul>
-
 					<div class="tab-content pt-2" id="nav-tabContent">
 						<div class="row py-3">
 							<div class="col-3"></div>
@@ -129,11 +158,9 @@
 							</div>
 							<div class="col-3"></div>
 						</div>
-
 						<div class="tab-pane fade show active" id="nav-content" role="tabpanel"></div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>

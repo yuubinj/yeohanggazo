@@ -866,6 +866,57 @@ public class BoardController {
 
 		return model;
 	}
+	
+	// 댓글 차단/해제 : AJAX-JSON
+	@RequestMapping(value = "/bbs/toggleReplyBlock", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> toggleReplyBlock(HttpServletRequest req, HttpServletResponse resp) {
+	    Map<String, Object> map = new HashMap<>();
+	    HttpSession session = req.getSession();
+	    SessionInfo info = (SessionInfo) session.getAttribute("member");
+
+	    if (info == null) {
+	        map.put("status", "unauthenticated");
+	        return map;
+	    }
+
+	    String userId = info.getUserId();
+	    int userLevel = info.getUserLevel();
+
+	    try {
+	        long replyNum = Long.parseLong(req.getParameter("replyNum"));
+	        String parentNumStr = req.getParameter("parentNum");
+	        Long parentNum = (parentNumStr == null || parentNumStr.equals("null") || parentNumStr.isEmpty()) 
+	                            ? null : Long.parseLong(parentNumStr);
+
+	        String action = req.getParameter("action"); // "block" 또는 "unblock"
+
+	        BoardDAO dao = new BoardDAO();
+	        BbsReplyDTO reply = dao.findReplyByReplyNum(replyNum);
+
+	        if (reply == null) {
+	            map.put("status", "notFound");
+	        } else if (userId.equals(reply.getUserId()) || userLevel >= 51) {
+	            if ("block".equals(action)) {
+	                dao.blockReply(replyNum, parentNum);
+	                map.put("status", "blocked");
+	            } else if ("unblock".equals(action)) {
+	                dao.unblockReply(replyNum, parentNum);
+	                map.put("status", "unblocked");
+	            } else {
+	                map.put("status", "invalidAction");
+	            }
+	        } else {
+	            map.put("status", "unauthorized");
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        map.put("status", "error");
+	    }
+
+	    return map;
+	}
 
 
 }

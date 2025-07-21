@@ -196,7 +196,7 @@ form[name='searchForm'] input {
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
 				<div class="body-title">
-					<h3 class="section-title"><i class="bi bi-stars"></i> 자유게시판 </h3>
+					<h3 class="section-title"><i class="bi bi-lightbulb-fill" style="color: #f1c40f;"></i> 자유게시판 </h3>
 				</div>
 				
 				<!-- 카테고리 선택 드롭다운 -->

@@ -43,7 +43,7 @@
 
 .faq-subject .faq-category {
 	position: absolute;
-	left: 85%; 
+	left: 87%; 
 	color: #888;
 	font-size: 14px;
 	white-space: nowrap;
