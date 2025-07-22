@@ -119,17 +119,18 @@ $(document).on('click', '.star-btn', function() {
     if (!confirm('스크랩을 삭제하시겠습니까?')) return;
 
     const btn = $(this);
-    const apiTypeId = btn.data('num');
-
+    const apiId = btn.data('apiId');
+    console.log('apiTypeId:', apiTypeId);
     $.ajax({
         url: '${pageContext.request.contextPath}/myPage/scrap/delete',
         type: 'POST',
-        data: { apiTypeId: apiTypeId },
+        data: { apiId: apiId },
         dataType: 'json',
         success: function(res) {
             if (res.state === 'true') {
                 // 삭제 성공 시 해당 카드 제거
                 btn.closest('.scrap-card').remove();
+                location.reload();
             } else {
                 alert(res.message || '삭제에 실패했습니다.');
             }

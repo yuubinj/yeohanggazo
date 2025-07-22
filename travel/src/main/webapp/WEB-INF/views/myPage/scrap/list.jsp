@@ -104,7 +104,7 @@
 							</c:otherwise>
 						</c:choose>
 
-						<button type="button" class="star-btn" data-apiId="${dto.apiId}"
+						<button type="button" class="star-btn" data-api-id="${dto.apiId}"
 							title="즐겨찾기 삭제"
 							style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer; color: gold; font-size: 24px;">
 							<i class="bi bi-star-fill"></i>
