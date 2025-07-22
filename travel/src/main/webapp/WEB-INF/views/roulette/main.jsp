@@ -77,7 +77,7 @@ canvas {
 				<div class="col-md-10 my-3 p-3">
 					<div class="body-title">
 						<h3 class="section-title">
-							<i class="bi bi-app"></i> 룰렛 돌리기
+							<i class="fa-regular fa-hand-point-right"></i> 룰렛 돌리기
 						</h3>
 					</div>
 
