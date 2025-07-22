@@ -13,7 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import com.travel.mvc.annotation.RequestMapping;
 import com.travel.dao.ScheduleDAO;
+import com.travel.dao.ScrapDAO;
 import com.travel.model.ScheduleDTO;
+import com.travel.model.ScrapDTO;
 import com.travel.model.SessionInfo;
 import com.travel.mvc.annotation.Controller;
 import com.travel.mvc.annotation.RequestMethod;
@@ -34,13 +36,13 @@ public class myPageController {
 			ModelAndView mav = new ModelAndView("myPage/myPage");
 			
 			ScheduleDAO scheduleDao = new ScheduleDAO();
-			List<ScheduleDTO> listSchedule = scheduleDao.listSchedule(0, 12);
-//			ScrapDAO scrapDao = new ScrapDAO();
-//			List<ScrapDTO> listScrap = scrapDao.listScrap(0, 5);
+			List<ScheduleDTO> listSchedule = scheduleDao.listSchedule(0, 12, info.getUserId());
+			ScrapDAO scrapDao = new ScrapDAO();
+			List<ScrapDTO> listScrap = scrapDao.mypageListScrap(0, 9, info.getUserId());
 			
 			mav.addObject("member", info);
 			mav.addObject("listSchedule", listSchedule);
-//			mav.addObject("listScrap", listScrap);
+			mav.addObject("listScrap", listScrap);
 			return mav;
 		}
 		
