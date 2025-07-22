@@ -72,38 +72,43 @@
 	display: flex;
 }
 
-  .star-btn i {
-    color: gold;
-    font-size: 24px;
-    text-shadow:
-      -1px -1px 0 #000,
-      1px -1px 0 #000,
-      -1px 1px 0 #000,
-      1px 1px 0 #000;
-  }
-
+.star-btn i {
+	color: gold;
+	font-size: 24px;
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px
+		0 #000;
+}
 </style>
 
 <div class="container mt-3">
 	<div class="row">
-		<c:forEach var="dto" items="${list}" >
+		<c:forEach var="dto" items="${list}" varStatus="status">
 			<div class="col-md-4 d-flex">
-				<div class="scrap-card w-100" data-content-id="${dto.apiId}">
+				<c:set var="realIndex" value="${offset + status.index + 1}" />
+				<div class="scrap-card w-100" data-content-id="${dto.apiId}" data-num="${realIndex}">
 					<div class="scrap-image-wrapper" style="position: relative;">
-					<c:choose>
-					<c:when test="${not empty dto.scrapImg}">
-						<img src="${dto.scrapImg}" alt="즐겨찾기 이미지" class="scrap-image"
-						onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-					</c:when>
-					<c:otherwise>
-						<div class="alt-text" style="display: flex;">즐겨찾기 이미지</div>
-					</c:otherwise>
-					</c:choose>
-					
-					<button type="button" class="star-btn" data-apiId="${dto.apiId}" title="즐겨찾기 삭제"
-					style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer; color: gold; font-size: 24px;">
-					  <i class="bi bi-star-fill"></i>
-					</button>
+						<c:choose>
+							<c:when test="${not empty dto.scrapImg}">
+								<img src="${dto.scrapImg}" alt="즐겨찾기 이미지" class="scrap-image"
+									onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-icon').style.display='block';" />
+								<div class="fallback-icon"
+									style="display: none; width: 100px; height: 100px; background: #ccc; justify-content: center; align-items: center;">
+									<i class="fa-regular fa-image"></i>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<div class="fallback-icon"
+									style="width: 100px; height: 100px; background: #ccc; display: flex; justify-content: center; align-items: center;">
+									<i class="fa-regular fa-image"></i>
+								</div>
+							</c:otherwise>
+						</c:choose>
+
+						<button type="button" class="star-btn" data-apiId="${dto.apiId}"
+							title="즐겨찾기 삭제"
+							style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer; color: gold; font-size: 24px;">
+							<i class="bi bi-star-fill"></i>
+						</button>
 					</div>
 					<div class="scrap-text">
 						<div class="scrap-name">${dto.scrapName}</div>
@@ -116,4 +121,6 @@
 </div>
 
 <div class="page-navigation text-center">${dataCount == 0 ? "더 이상 데이터가 없습니다." : paging}
+	<input type="hidden" id="size" value="${size}">
+	<input type="hidden" id="total_count" value="${total_count}">
 </div>

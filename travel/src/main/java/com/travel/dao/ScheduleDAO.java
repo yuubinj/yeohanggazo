@@ -250,7 +250,7 @@ public class ScheduleDAO {
 
 	}
 	
-	public List<ScheduleDTO> listSchedule(int offset, int size) {
+	public List<ScheduleDTO> listSchedule(int offset, int size, String userId) {
 		List<ScheduleDTO> list = new ArrayList<ScheduleDTO>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -261,15 +261,16 @@ public class ScheduleDAO {
 			sb.append("SELECT num, m.userId, subject, color, do_date, end_date, memo, reg_date ");
 			sb.append("FROM schedule s ");
 			sb.append("JOIN member1 m ON s.userId = m.userId ");
-			sb.append("WHERE TO_DATE(do_date, 'YYYY-MM-DD') >= TRUNC(SYSDATE) or TO_DATE(end_date, 'YYYY-MM-DD') >= TRUNC(SYSDATE)");
+			sb.append("WHERE m.userId = ? and (TO_DATE(do_date, 'YYYY-MM-DD') >= TRUNC(SYSDATE) or TO_DATE(end_date, 'YYYY-MM-DD') >= TRUNC(SYSDATE))");
 			sb.append("ORDER BY TO_DATE(do_date, 'YYYY-MM-DD') ASC ");
 			sb.append("OFFSET ? ROWS FETCH FIRST ? ROWS ONLY");
 
 
 			pstmt = conn.prepareStatement(sb.toString());
 			
-			pstmt.setInt(1, offset);
-			pstmt.setInt(2, size);
+			pstmt.setString(1, userId);
+			pstmt.setInt(2, offset);
+			pstmt.setInt(3, size);
 
 			rs = pstmt.executeQuery();
 
@@ -277,7 +278,7 @@ public class ScheduleDAO {
 				ScheduleDTO dto = new ScheduleDTO();
 
 				dto.setNum(rs.getLong("num"));
-				dto.setUserId(rs.getString("userId"));
+				dto.setUserId(userId);
 				dto.setSubject(rs.getString("subject"));
 				dto.setColor(rs.getString("color"));
 				dto.setDo_date(rs.getString("do_date"));
