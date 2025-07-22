@@ -124,7 +124,7 @@ public class LoginFilter implements Filter {
 			"/inquiry/listAllCategory", "/faq/main", "/faq/list", "/myTrip/**",
 			 "/theme/main", "/location/main", "/location/weatherXML", "/home/communityList",
 			 "/roulette/main", "/location/specialtyView", "/location/restaurantView", 
-			 "/location/itemDetail"
+			 "/location/itemDetail", "/location/festival" , "/location/map", "/festival/festivalMain"
 		};
 		
 		if(uri.length() <= 1) {
