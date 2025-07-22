@@ -8,7 +8,7 @@
 				<c:forEach var="dto" items="${list}">
 					<div class="item-box border" style="padding: 5px; cursor:pointer; width: 300px" 
 					onclick="location.href='${pageContext.request.contextPath}/${articleUrl}&num=${dto.num}'">
-						<p style="font-weight: 500">${dto.subject}</p>
+						<p style="font-weight: 600">${dto.subject}</p>
 						<p style="font-size: 13px;">${categoryName=='inquiry' ? dto.question : dto.content}</p>
 						<p style="font-size: 13px;">작성자 : ${dto.userName}</p>
 						<p style="font-size: 13px;">작성일자 : ${dto.reg_date}</p>

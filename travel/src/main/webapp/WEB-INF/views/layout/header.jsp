@@ -3,6 +3,7 @@
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
 <style type="text/css">
+
 .btn-primary {
 	background-color: #91c4e8;
 	color: #fff;
@@ -13,6 +14,14 @@
 
 .btn-primary:hover {
 	background-color: #56a5da;
+}
+
+.navbar-brand:hover {
+	text-decoration: none;
+}
+
+.member-div:hover{
+	text-decoration: none;
 }
 </style>
 
@@ -54,7 +63,7 @@
 			</ul>
 		</div>
 
-		<div class="d-flex justify-content-end align-items-center"
+		<div class="d-flex justify-content-end align-items-center member-div"
 			style="color: #fff; font-size: 16px;">
 			<c:choose>
 				<c:when test="${empty sessionScope.member}">

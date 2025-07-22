@@ -23,15 +23,15 @@ canvas {
 
 #rouletteBtn {
   background: #c4dff3;
-  margin-top: 1rem;
+  margin-top: 2rem;
   padding: .8rem 1.8rem;
   border: none;
-  font-size: 1.5rem;
+  font-size: 20px;
   font-weight: bold;
   border-radius: 5px;
   transition: .2s;
   cursor: pointer;
-    color: #fff;
+  color: #fff;
 }
 
 #rouletteBtn:hover {

@@ -31,13 +31,14 @@
 }
 
 .nav {
---bs-nav-link-color: silver;
+	--bs-nav-link-color: silver;
 }
 
 #rouletteImg {
     margin: auto;
     display: block;
 }
+
 </style>
 </head>
 <body>
@@ -93,7 +94,7 @@
 		
 		<!-- 커뮤니티 -->
 		<div style="margin: 50px">
-			<ul class="nav nav-tabs" id="myTab" role="tablist" style="--bs-nav-tabs-border-width: none; font-weight: bold; font-size: 16px;">
+			<ul class="nav nav-tabs" id="myTab" role="tablist" style="--bs-nav-tabs-border-width: none; font-size: 16px; font-weight: bold">
 				<li class="nav-inquiry-item" role="presentation">
 					<button class="nav-link ${selectedCateCommu=='bbs' || selectedCateCommu == null ?'active':''}" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-selected="true" data-tab="bbs">자유게시판</button>
 				</li>
