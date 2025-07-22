@@ -123,7 +123,8 @@ public class LoginFilter implements Filter {
 			"/dist/**", "/inquiry/main", "/inquiry/list", "/inquiry/article",
 			"/inquiry/listAllCategory", "/faq/main", "/faq/list", "/myTrip/**",
 			 "/theme/main", "/location/main", "/location/weatherXML", "/home/communityList",
-			 "/roulette/main"
+			 "/roulette/main", "/location/specialtyView", "/location/restaurantView", 
+			 "/location/itemDetail"
 		};
 		
 		if(uri.length() <= 1) {

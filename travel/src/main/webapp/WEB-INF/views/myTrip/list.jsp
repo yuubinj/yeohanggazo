@@ -73,7 +73,7 @@ body {
 				<div class="col-md-10 my-3 p-3">
 					<div class="body-title">
 						<h3 class="section-title">
-							<i class="bi bi-app"></i> 내 여행 자랑하기
+							<i class="bi bi-airplane"></i> 내 여행 자랑하기
 						</h3>
 					</div>
 

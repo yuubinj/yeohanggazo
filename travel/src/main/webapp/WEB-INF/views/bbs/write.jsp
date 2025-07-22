@@ -5,9 +5,132 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>글 작성</title>
+<title>자유게시판 - 글 작성</title>
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
+
+<style type="text/css">
+/* 폼 전체 배경 */
+body {
+    background-color: #f8f9fc;
+}
+
+/* 카드 스타일 */
+.rounded-box {
+    background-color: #fff;
+    border-radius: 16px;
+    border: 1px solid #e2e2e2;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    padding: 28px;
+}
+
+/* 테이블 정리 */
+.table.write-form {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    border: none;
+    width: 100%;
+}
+
+.table.write-form td {
+    border: none !important;
+    background: transparent !important;
+    padding: 14px 12px;
+    vertical-align: middle;
+    font-weight: normal;
+    color: #333;
+}
+
+/* 제목, 작성자, 내용 등의 라벨 셀 */
+.table.write-form td:first-child {
+    width: 100px;
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* 오른쪽 칸 자동 확장 */
+.table.write-form td:last-child {
+    width: auto;
+}
+
+
+
+/* 줄 구분선 */
+.table.write-form tr + tr td {
+    border-top: 1px solid #eee !important;
+}
+
+/* 카테고리 셀렉트박스 스타일 */
+.select-category {
+    min-width: 140px;
+    height: 44px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-shadow: none;
+    background-color: #fff;
+    margin-right: 12px;
+}
+
+/* 제목 입력 */
+.input-subject-style {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    height: 44px;
+    padding: 8px 12px;
+    font-size: 16px;
+    transition: border 0.2s ease;
+    flex: 1;
+    margin-left: 0;
+}
+
+.input-subject-style:focus {
+    outline: none;
+    border-color: #7da4ff;
+}
+
+/* 기본 input, select, textarea */
+.form-control,
+.form-select {
+    border-radius: 10px !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+    transition: border 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #7da4ff !important;
+    outline: none;
+}
+
+/* 실제 작성자명 출력 텍스트 스타일 */
+.writer-name {
+    font-size: 16px;
+    color: #222;
+}
+
+/* 버튼 통일감 있게 */
+.btn {
+    padding: 8px 18px;
+    font-size: 15px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-dark:hover {
+    background-color: #1c1c1c;
+}
+
+.btn-light:hover {
+    background-color: #f0f0f0;
+}
+
+</style>
 
 </head>
 <body>
@@ -19,63 +142,89 @@
 	<div class="container">
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
-				<h3><i class="bi bi-book-half"></i> ${mode=='update'?'게시물 수정':'게시물 작성'}</h3>
+				<h3><i class="bi bi-pencil-square"></i> ${mode=='update'?'게시물 수정':'게시물 작성'}</h3>
 
 				<form name="postForm" method="post" enctype="multipart/form-data">
-					<table class="table mt-4 write-form">
-						<tr>
-						    <td class="bg-light col-sm-2" scope="row">제 목</td>
-						    <td>
-						        <select name="categoryNum" class="form-select w-auto d-inline">
-									<c:choose>
-										<c:when test="${sessionScope.member.userLevel == 99}">
-											<option value="" disabled selected> 선택 </option>
-											<option value="1" ${categoryNum == 1 ? "selected" : ""}>공지</option>
-											<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
-											<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
-											<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
-										</c:when>
-										<c:otherwise>
-											<option value="" disabled selected> 선택 </option>
-											<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
-											<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
-											<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
-										</c:otherwise>
-									</c:choose>
-								</select>
-						        <input type="text" name="subject" maxlength="100" class="form-control d-inline w-75" value="${dto.subject}">
-						    </td>
-						</tr>
-						<tr>
-							<td class="bg-light" scope="row">작성자명</td>
-							<td><p class="form-control-plaintext">${sessionScope.member.userName}</p></td>
-						</tr>
-						<tr>
-							<td class="bg-light" scope="row">내 용</td>
-							<td>
-								<textarea name="content" id="ir1" class="form-control" style="width: 99%; height: 300px;">${dto.content}</textarea>
-							</td>
-						</tr>
-						<tr>
-							<td class="bg-light" scope="row">첨부파일</td>
-							<td><input type="file" name="selectFile" class="form-control"></td>
-						</tr>
-						<c:if test="${mode=='update'}">
+				
+					<!-- 제목 + 작성자 박스 -->
+					<div class="rounded-box mb-4"><!-- 새로 추가됨: 둥근 흰 박스 -->
+					
+						<table class="table write-form mb-0"><!-- 수정됨: class 추가(write-form), mb-0로 여백 제거 -->
 							<tr>
-								<td class="bg-light" scope="row">첨부된파일</td>
+								<td class="col-sm-2" scope="row">제 목</td> <!-- 수정됨: class="bg-light" 삭제 -->
 								<td>
-									<c:if test="${not empty dto.saveFilename}">
-										<!-- 삭제 버튼 클릭 시 파일 영역 숨기고 deleteFlag 설정 -->
+									<!-- 수정됨: 제목과 카테고리를 나란히 정렬하는 flex 구조 -->
+									 <div class="d-flex gap-2 align-items-center">
+	    								<div class="category-wrapper">
+									        <select name="categoryNum" class="form-select select-category">
+												<c:choose>
+													<c:when test="${sessionScope.member.userLevel == 99}">
+														<option value="" disabled selected> 선택 </option>
+														<option value="1" ${categoryNum == 1 ? "selected" : ""}>공지</option>
+														<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
+														<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
+														<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
+													</c:when>
+													<c:otherwise>
+														<option value="" disabled selected> 선택 </option>
+														<option value="2" ${categoryNum == 2 ? "selected" : ""}>현지인 추천</option>
+														<option value="3" ${categoryNum == 3 ? "selected" : ""}>리뷰</option>
+														<option value="4" ${categoryNum == 4 ? "selected" : ""}>기타</option>
+													</c:otherwise>
+												</c:choose>
+											  </select>
+	    									</div>
+										
+										<!-- 수정됨: 제목 input에 배경색 주기 위해 input-subject-style 클래스 추가 -->
+										<input type="text" name="subject" maxlength="100"
+										       class="form-control border-0 input-subject-style"
+										       style="flex:1;"
+										       placeholder="제목을 입력해 주세요."
+										       value="${dto.subject}">
+									</div>
+								</td>
+							</tr>
+					
+							<tr>
+								<td scope="row">작성자명</td> <!-- 수정됨: class="bg-light" 삭제 -->
+								<td>
+									<p class="form-control-plaintext mb-0 writer-name">${sessionScope.member.userName}</p> <!-- 수정됨: mb-0로 아래 여백 제거 -->
+								</td>
+							</tr>
+						</table>
+					</div>
+					
+					<!-- 내용 + 첨부파일 박스 -->
+					<div class="rounded-box mb-4"><!-- 새로 추가됨: 둥근 흰 박스 -->
+					
+						<table class="table write-form mb-0"><!-- 수정됨: class 추가(write-form), mb-0로 여백 제거 -->
+							<tr>
+								<td class="col-sm-2" scope="row">내 용</td> <!-- 수정됨: class="bg-light" 삭제 -->
+								<td>
+									<textarea name="content" id="ir1" class="form-control"
+									          style="width: 99%; height: 300px;">${dto.content}</textarea>
+								</td>
+							</tr>
+					
+							<tr>
+								<td scope="row">첨부파일</td> <!-- 수정됨: class="bg-light" 삭제 -->
+								<td><input type="file" name="selectFile" class="form-control"></td>
+							</tr>
+					
+							<c:if test="${mode=='update' && not empty dto.saveFilename}">
+								<tr>
+									<td scope="row">첨부된파일</td> <!-- 수정됨: class="bg-light" 삭제 -->
+									<td>
 										<div id="attachedFileArea">
 											<a href="javascript:markFileForDelete();"><i class="bi bi-trash"></i></a>
 											${dto.originalFilename}
 										</div>
-									</c:if>
-								</td>
-							</tr>
-						</c:if>
-					</table>
-
+									</td>
+								</tr>
+							</c:if>
+						</table>
+					</div>
+					
 					<div class="text-center mt-3">
 						<button type="button" class="btn btn-dark" onclick="submitContents(this.form);">${mode=='update'?'수정완료':'등록완료'} <i class="bi bi-check2"></i></button>
 						<button type="reset" class="btn btn-light">다시입력</button>

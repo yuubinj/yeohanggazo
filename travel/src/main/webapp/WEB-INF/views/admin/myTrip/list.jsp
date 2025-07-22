@@ -10,6 +10,52 @@
 <jsp:include page="/WEB-INF/views/admin/layout/headerResources.jsp"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/board.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/dist/css/paginate.css" type="text/css">
+<style type="text/css">
+.myTrip-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 70%;
+    cursor: pointer;
+}
+
+body {
+    background-color: #f8f9fc;
+}
+
+.body-title h3 {
+	border-bottom: none !important;
+}
+
+.section-title {
+    position: relative;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 24px;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    color: #2c3e50;
+}
+
+.section-title::after {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 200px;
+    height: 3px;
+    background-color: #ccc;
+    border-radius: 6px;
+}
+
+.myTrip-list-wrapper {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+</style>
 </head>
 <body>
 
@@ -22,13 +68,18 @@
 		<div class="body-container row justify-content-center">
 			<div class="col-md-10 my-3 p-3">
 				<div class="body-title">
-					<h3>
-						<i class="bi bi-app"></i> 내 여행 자랑하기
+					<h3 class="section-title">
+						<i class="bi bi-airplane"></i> 내 여행 자랑하기
 					</h3>
 				</div>
 
-				<div class="body-main">
-	
+				<div class="row board-list-header mb-3">
+					<div class="col-auto me-auto dataCount">
+						${dataCount}개(${pageNo}/${total_page} 페이지)</div>
+					<div class="col-auto">&nbsp;</div>
+				</div>
+				
+				<div class="body-main myTrip-list-wrapper">
 					<div class="row board-list-footer">
 						<div class="col text-center">
 							<form class="row" name="searchForm">
@@ -61,13 +112,7 @@
 							</form>
 						</div>
 					</div>
-
-					<div class="row board-list-header">
-						<div class="col-auto me-auto dataCount">
-							${dataCount}개(${pageNo}/${total_page} 페이지)</div>
-						<div class="col-auto">&nbsp;</div>
-					</div>
-
+					
 					<div class="row g-3">
 						<c:forEach var="dto" items="${list}" varStatus="status">
 							<div class="col-4">
@@ -119,10 +164,10 @@
 							</div>
 						</c:forEach>
 					</div>
+					<div class="page-navigation">${dataCount == 0 ? "등록된 게시글이 없습니다." : paging}
+					</div>
 				</div>
 
-				<div class="page-navigation">${dataCount == 0 ? "등록된 게시글이 없습니다." : paging}
-				</div>
 
 			</div>
 		</div>
