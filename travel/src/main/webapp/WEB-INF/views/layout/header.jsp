@@ -143,8 +143,7 @@
 							<p class="form-control-plaintext">계정으로 로그인 하세요</p>
 						</div>
 						<div class="mt-0">
-							<input type="text" name="userId" class="form-control"
-								placeholder="아이디">
+							<input type="text" id="modalUserId" name="userId" class="form-control" placeholder="아이디">
 						</div>
 						<div>
 							<input type="password" name="userPwd" class="form-control"
@@ -179,34 +178,57 @@
 
 <!-- Login Modal -->
 <script type="text/javascript">
-	console.log('${sessionScope.member.avatar}');
-	console.log('${sessionScope.member}');
 	function dialogLogin() {
-		$('form[name=modalLoginForm] input[name=userId]').val('');
-		$('form[name=modalLoginForm] input[name=userPwd]').val('');
-
-		$('#loginModal').modal('show');
-
-		$('form[name=modalLoginForm] input[name=userId]').focus();
+	    $('form[name=modalLoginForm] input[name=userId]').val('');
+	    $('form[name=modalLoginForm] input[name=userPwd]').val('');
+	
+	    $('#loginModal').modal('show');
+	
+	    $('form[name=modalLoginForm] input[name=userId]').focus();
 	}
 
-	function sendModalLogin() {
-		const f = document.modalLoginForm;
-		let str;
+$(document).ready(function() {
+    // 모달 열릴 때: 저장된 아이디가 있으면 입력
+    $('#loginModal').on('shown.bs.modal', function () {
+        const savedId = localStorage.getItem("savedUserId");
+        if (savedId) {
+            $("#modalUserId").val(savedId);
+            $("#rememberMeModal").prop("checked", true);
+        }
+    });
 
-		str = f.userId.value;
-		if (!str) {
-			f.userId.focus();
-			return;
-		}
+    // 모달 닫힐 때: 체크 안 되어 있으면 삭제
+    $('#loginModal').on('hidden.bs.modal', function () {
+        const remember = $("#rememberMeModal").is(":checked");
+        if (!remember) {
+            localStorage.removeItem("savedUserId");
+        }
+    });
 
-		str = f.userPwd.value;
-		if (!str) {
-			f.userPwd.focus();
-			return;
-		}
+    // 로그인 버튼 클릭 시 처리
+    window.sendModalLogin = function() {
+        const userId = $("#modalUserId").val();
+        const remember = $("#rememberMeModal").is(":checked");
 
-		f.action = '${pageContext.request.contextPath}/member/login';
-		f.submit();
-	}
+        if (remember) {
+            localStorage.setItem("savedUserId", userId);
+        } else {
+            localStorage.removeItem("savedUserId");
+        }
+
+        const f = document.modalLoginForm;
+
+        if (!f.userId.value.trim()) {
+            f.userId.focus();
+            return;
+        }
+        if (!f.userPwd.value.trim()) {
+            f.userPwd.focus();
+            return;
+        }
+
+        f.action = '${pageContext.request.contextPath}/member/login';
+        f.submit();
+    };
+});
 </script>

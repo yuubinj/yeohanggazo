@@ -74,7 +74,7 @@ public class LocationController extends HttpServlet {
 	public void callTourApi(HttpServletRequest req, HttpServletResponse resp, String contentTypeId)
 			throws ServletException, IOException {
 
-		String serviceKey = "WCeKhkV7DfWYcRlxKIqm8I6d7c%2BD0CwC8vJ7B%2Fh7J4RSGz4zihS23dOZ3u3nb%2FsPzC563o%2FiLbqGCCZx%2FWe9tQ%3D%3D";
+		String serviceKey = "서비스키";
         String areaCode = req.getParameter("areaCode");
         String keyword = req.getParameter("keyword");
         String pageNo = req.getParameter("pageNo");

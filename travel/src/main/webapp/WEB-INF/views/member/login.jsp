@@ -10,15 +10,10 @@
 <jsp:include page="/WEB-INF/views/layout/headerResources.jsp"/>
 <style type="text/css">
 .btn-primary {
-	background-color: #91c4e8;
-	color: #fff;
+	background-color: #5f0080;
 	border: none;
 	height: 50px;
 	font-size: 16px;
-}
-
-.btn-primary:hover {
-	background-color: #56a5da;
 }
 </style>
 
@@ -39,7 +34,7 @@
                         <h3 class="text-center"><i class="bi bi-lock"></i> 회원 로그인</h3>
                         <div class="col-12">
                             <label class="mb-1">아이디</label>
-                            <input type="text" name="userId" class="form-control" placeholder="아이디">
+                            <input type="text" id="userId" name="userId" class="form-control" placeholder="아이디">
                         </div>
                         <div class="col-12">
                             <label class="mb-1">패스워드</label>
@@ -78,21 +73,47 @@
 <script type="text/javascript">
 function sendLogin() {
     const f = document.loginForm;
-	
-    if( ! f.userId.value.trim() ) {
-        f.userId.focus();
+    const userIdInput = document.getElementById("userId");
+    const rememberCheck = document.getElementById("rememberMe");
+
+    if (!userIdInput.value.trim()) {
+        userIdInput.focus();
         return;
     }
 
-    if( ! f.userPwd.value.trim() ) {
+    if (!f.userPwd.value.trim()) {
         f.userPwd.focus();
         return;
     }
-    console.log('${pageContext.request.contextPath}');
+
+    // 체크박스 상태에 따라 저장 또는 삭제
+    if (rememberCheck.checked) {
+        localStorage.setItem("savedUserId", userIdInput.value.trim());
+    } else {
+        localStorage.removeItem("savedUserId");
+    }
+
     f.action = '${pageContext.request.contextPath}/member/login';
-    console.log(f.action);
     f.submit();
 }
+
+window.addEventListener("DOMContentLoaded", function() {
+    const savedId = localStorage.getItem("savedUserId");
+    const userIdInput = document.getElementById("userId");
+    const rememberCheck = document.getElementById("rememberMe");
+
+    if (savedId) {
+        userIdInput.value = savedId;
+        rememberCheck.checked = true;
+    }
+
+    // 체크 해제 시 실시간으로 삭제 처리
+    rememberCheck.addEventListener("change", function() {
+        if (!this.checked) {
+            localStorage.removeItem("savedUserId");
+        }
+    });
+});
 </script>
 
 <footer>
